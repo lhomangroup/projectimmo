@@ -1,191 +1,185 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes coordonnées - {{ obj.titre_logement }}</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
-        }
-        .form-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-        }
-        .form-section h2 {
-            margin-top: 0;
-            color: #333;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
-        .form-row .form-group {
-            flex: 1;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .btn {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-        .btn-secondary:hover {
-            background-color: #545b62;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Mes coordonnées - {{ obj.titre_logement }}</h1>
-            <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Retour au tableau de bord</a>
-        </div>
 
-        <form method="post">
-            {% csrf_token %}
+{% extends "annonce/dashboard/dashboard.html" %}
 
-            <div class="form-section">
-                <h2>Informations personnelles</h2>
+{% block content %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    .form-section h2 {
+        margin-top: 0;
+        color: #333;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    .btn {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 10px;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+</style>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
-                        {{ form.first_name }}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
-                        {{ form.last_name }}
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-                        {{ form.email }}
-                    </div>
-
-                    <div class="form-group">
-                        <label for="{{ form.telephone.id_for_label }}">{{ form.telephone.label }}</label>
-                        {{ form.telephone }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h2>Adresse</h2>
-                <input type="hidden" name="adressComplete" id="adressComplete" value="">
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="rue">Numéro et rue</label>
-                        <input type="text" id="rue" name="rue" value="{{ address.rue|default:'' }}" placeholder="123 rue de la Paix">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="voie">Complément d'adresse</label>
-                        <input type="text" id="voie" name="voie" value="{{ address.voie|default:'' }}" placeholder="Appartement, étage, etc.">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="ville">Ville</label>
-                        <input type="text" id="ville" name="ville" value="{{ address.ville|default:'' }}" placeholder="Paris">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="zip">Code postal</label>
-                        <input type="text" id="zip" name="zip" value="{{ address.zipCode|default:'' }}" placeholder="75001">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="region">Région</label>
-                        <input type="text" id="region" name="region" value="{{ address.region|default:'' }}" placeholder="Île-de-France">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="pays">Pays</label>
-                        <input type="text" id="pays" name="pays" value="{{ address.pays|default:'France' }}" placeholder="France">
-                    </div>
-                </div>
-            </div>
-
-            <div style="margin-top: 30px;">
-                <button type="submit" class="btn">Sauvegarder mes informations</button>
-                <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Annuler</a>
-            </div>
-        </form>
+<div class="form-container">
+    <div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #eee;">
+        <h1>Mes coordonnées - {{ obj.titre_logement }}</h1>
+        <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Retour au tableau de bord</a>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            // Mettre à jour le champ adressComplete quand les champs d'adresse changent
-            $('input[name="rue"], input[name="voie"], input[name="ville"], input[name="zip"], input[name="region"], input[name="pays"]').on('input', function() {
-                var adresse = $('input[name="rue"]').val() + ' ' + 
-                             $('input[name="voie"]').val() + ' ' + 
-                             $('input[name="ville"]').val() + ' ' + 
-                             $('input[name="zip"]').val() + ' ' + 
-                             $('input[name="region"]').val() + ' ' + 
-                             $('input[name="pays"]').val();
-                $('#adressComplete').val(adresse.trim());
-            });
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h2>Informations personnelles</h2>
+            {% load crispy_forms_tags %}
+            {{ form|crispy }}
+        </div>
+
+        <div class="form-section">
+            <h2>Adresse</h2>
+            <div class="form-group">
+                <label for="autocomplete">Entrez votre adresse complète</label>
+                <input id="autocomplete" name="adressComplete" placeholder="Entrez votre adresse" type="text" class="form-control" value="{% if address %}{{ address.rue }} {{ address.voie }}, {{ address.ville }} {{ address.zipCode }}{% endif %}">
+            </div>
+            
+            <div class="form-group">
+                <label for="rue">Rue</label>
+                <input type="text" name="rue" id="rue" value="{% if address %}{{ address.rue }}{% endif %}">
+            </div>
+            
+            <div class="form-group">
+                <label for="voie">Voie</label>
+                <input type="text" name="voie" id="voie" value="{% if address %}{{ address.voie }}{% endif %}">
+            </div>
+            
+            <div class="form-group">
+                <label for="ville">Ville</label>
+                <input type="text" name="ville" id="ville" value="{% if address %}{{ address.ville }}{% endif %}">
+            </div>
+            
+            <div class="form-group">
+                <label for="region">Région</label>
+                <input type="text" name="region" id="region" value="{% if address %}{{ address.region }}{% endif %}">
+            </div>
+            
+            <div class="form-group">
+                <label for="zip">Code postal</label>
+                <input type="text" name="zip" id="zip" value="{% if address %}{{ address.zipCode }}{% endif %}">
+            </div>
+            
+            <div class="form-group">
+                <label for="pays">Pays</label>
+                <input type="text" name="pays" id="pays" value="{% if address %}{{ address.pays }}{% else %}France{% endif %}">
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button type="submit" class="btn">Sauvegarder</button>
+            <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// Script pour l'autocomplétion d'adresse si Google Maps API est disponible
+function initAutocomplete() {
+    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+        var autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('autocomplete'),
+            { types: ['address'] }
+        );
+        
+        autocomplete.addListener('place_changed', function() {
+            var place = autocomplete.getPlace();
+            if (place.address_components) {
+                // Parser les composants de l'adresse
+                var components = {};
+                place.address_components.forEach(function(component) {
+                    var types = component.types;
+                    if (types.includes('street_number')) {
+                        components.street_number = component.long_name;
+                    }
+                    if (types.includes('route')) {
+                        components.route = component.long_name;
+                    }
+                    if (types.includes('locality')) {
+                        components.city = component.long_name;
+                    }
+                    if (types.includes('administrative_area_level_1')) {
+                        components.region = component.long_name;
+                    }
+                    if (types.includes('postal_code')) {
+                        components.postal_code = component.long_name;
+                    }
+                    if (types.includes('country')) {
+                        components.country = component.long_name;
+                    }
+                });
+                
+                // Remplir les champs
+                if (components.street_number) document.getElementById('rue').value = components.street_number;
+                if (components.route) document.getElementById('voie').value = components.route;
+                if (components.city) document.getElementById('ville').value = components.city;
+                if (components.region) document.getElementById('region').value = components.region;
+                if (components.postal_code) document.getElementById('zip').value = components.postal_code;
+                if (components.country) document.getElementById('pays').value = components.country;
+            }
         });
-    </script>
-</body>
-</html>
+    }
+}
+
+// Initialiser l'autocomplétion si Google Maps est chargé
+if (typeof google !== 'undefined') {
+    initAutocomplete();
+} else {
+    // Charger Google Maps API si pas déjà chargé
+    var script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY }}&libraries=places&callback=initAutocomplete';
+    script.async = true;
+    document.head.appendChild(script);
+}
+</script>
+{% endblock %}

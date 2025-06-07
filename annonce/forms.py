@@ -143,7 +143,7 @@ class UserModif(ModelForm):
         model = Account
         fields = ('email','first_name','last_name','telephone','typelocataire')
         def __init__(self, *args, **kwargs):
-            super(EquipmentForm, self).__init__(*args,**kwargs)
+            super(UserModif, self).__init__(*args,**kwargs)
             self.helper = FormHelper()
             self.helper.form_method = 'POST'
 
@@ -155,25 +155,3 @@ class VerifImage(ModelForm):
             super(VerifImage, self).__init__(*args,**kwargs)
             self.helper = FormHelper()
             self.helper.form_method = 'POST'
-
-class UserModif(ModelForm):
-    class Meta:
-        model = Account
-        fields = ['first_name', 'last_name', 'telephone', 'email']
-        widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
-            'telephone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Téléphone'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
-        }
-        labels = {
-            'first_name': 'Prénom',
-            'last_name': 'Nom de famille',
-            'telephone': 'Téléphone',
-            'email': 'Adresse email',
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(UserModif, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = 'POST'
