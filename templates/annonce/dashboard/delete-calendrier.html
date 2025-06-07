@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supprimer disponibilité - {{ annonce.titre_logement }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .calendrier-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Supprimer disponibilité</h1>
+            <a href="{% url 'dashboard-calendrier' annonce.id %}" class="btn btn-secondary">Retour</a>
+        </div>
+
+        <div class="warning-box">
+            <h4 style="color: #856404; margin-top: 0;">⚠️ Attention</h4>
+            <p style="color: #856404; margin-bottom: 0;">Vous êtes sur le point de supprimer définitivement cette disponibilité.</p>
+        </div>
+
+        <div class="calendrier-info">
+            <h5>Disponibilité à supprimer :</h5>
+            <p><strong>Période :</strong> Du {{ calendrier.calendrier_debut|date:"d/m/Y" }} au {{ calendrier.calendrier_fin|date:"d/m/Y" }}</p>
+            <p><strong>État :</strong> 
+                <span style="color: {% if calendrier.disponibilite == 'disp' %}#28a745{% else %}#dc3545{% endif %};">
+                    {% if calendrier.disponibilite == 'disp' %}Disponible{% else %}Indisponible{% endif %}
+                </span>
+            </p>
+        </div>
+
+        <p><strong>Voulez-vous vraiment supprimer cette disponibilité ?</strong></p>
+
+        <div style="margin-top: 30px;">
+            <a href="{% url 'calendrier-delete-confirm' calendrier.id %}" class="btn btn-danger">Oui, supprimer</a>
+            <a href="{% url 'dashboard-calendrier' annonce.id %}" class="btn btn-secondary">Non, annuler</a>
+        </div>
+    </div>
+</body>
+</html>
