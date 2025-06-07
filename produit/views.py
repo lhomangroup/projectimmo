@@ -148,8 +148,8 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 
-def home():
-    return None
+def home(request):
+    return render(request, 'produit/home.html')
 
 
 def products():
