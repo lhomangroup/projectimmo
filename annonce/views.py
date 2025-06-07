@@ -124,6 +124,7 @@ def inscriptionPage(request):
 
 @unauthenticated_user
 def login_user(request):
+    from django.views.decorators.csrf import csrf_protect
 
     if request.method == 'POST':
         email = request.POST.get('email')

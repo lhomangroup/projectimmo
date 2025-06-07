@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% block title %}Créer un Produit{% endblock %}
@@ -6,27 +5,27 @@
 {% block content %}
 <div class="container">
     <h1>Créer un nouveau produit</h1>
-    
+
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
             <label for="nom">Nom du produit:</label>
             <input type="text" id="nom" name="nom" required>
         </div>
-        
+
         <div class="form-group">
             <label for="prix">Prix:</label>
             <input type="number" id="prix" name="prix" step="0.01" required>
         </div>
-        
+
         <div class="form-group">
             <label for="tags">Tags (séparés par des virgules):</label>
             <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3">
         </div>
-        
+
         <button type="submit">Créer le produit</button>
     </form>
-    
+
     <div class="navigation">
         <a href="{% url 'produit' %}">Retour à la liste des produits</a>
         <a href="{% url 'acceuil' %}">Retour à l'accueil</a>
