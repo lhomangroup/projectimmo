@@ -66,7 +66,17 @@ def create_annonce(request):
             # - associate new objects with newly created user to use in dashboard
             lastAnnonce = Annonce.objects.latest('id')
             lastAnnonce.user = user
+            lastAnnonce.address = myAdress
             lastAnnonce.save()
+            
+            # Gérer l'upload d'images multiples
+            uploaded_images = request.FILES.getlist('images')
+            for image in uploaded_images:
+                ImageLogement.objects.create(
+                    annonce=lastAnnonce,
+                    images=image
+                )
+            
             Condition.objects.create(
                 annonce=annonce,
             )
@@ -190,6 +200,16 @@ def logged_annonce(request):
             annonce.address = myAdress
             annonce.save()
             print(f"Annonce créée: ID {annonce.id} pour l'utilisateur {annonce.user.email}")
+            
+            # Gérer l'upload d'images multiples
+            print("Traitement des images uploadées...")
+            uploaded_images = request.FILES.getlist('images')
+            for image in uploaded_images:
+                ImageLogement.objects.create(
+                    annonce=annonce,
+                    images=image
+                )
+            print(f"{len(uploaded_images)} images uploadées avec succès")
             
             # Créer une condition pour cette annonce
             print("Création de la condition...")
