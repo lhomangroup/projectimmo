@@ -1,0 +1,34 @@
+{% load i18n widget_tweaks %}
+
+<div class="modal-dialog modal-lg" id="modalEdit" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Supprimer Disponibilité</h4>
+            </div>
+            <div class="modal-body">
+                    <p class="h4 text-danger">Voulez vous vraiment supprimer cette disponibilité ?</p>
+                </div>
+                <div class="modal-footer">
+                    {% if form.errors %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger">
+                                    <strong>{{ error|escape }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <a href="{% url 'calendrier-delete-confirm' calendrier.id %}" class="btn btn-danger">Oui</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+            </div>
+        </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

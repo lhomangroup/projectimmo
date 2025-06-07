@@ -1,0 +1,60 @@
+{% extends "annonce/dashboard/dashboard.html" %}
+
+{% block content %}
+    <div class="col-md-5">
+{% comment %}1 - This js which allows to submit forms through ajax and must be loaded in the page{% endcomment %}
+        {% for thisCalendrier in calendrier %}
+        <div class="row">
+            <p class="">{{thisCalendrier.calendrier_debut}}</p>
+            <p class="col-md-4">{{thisCalendrier.calendrier_fin}}</p>
+            <p class="col-md-4">{{thisCalendrier.disponibilite}}</p>
+            <a data-toggle="modal" data-target="#{{thisCalendrier.id}}" href="{% url 'calendrier-edit' thisCalendrier.id %}">Modifier</a>
+            <a data-toggle="modal" data-target="#{{thisCalendrier.id}}delete" href="{% url 'calendrier-delete' thisCalendrier.id %}" class="text-danger ml-5">Supprimer</a>
+        </div>
+        <div class="modal" id="{{thisCalendrier.id}}"></div>
+        <div class="modal" id="{{thisCalendrier.id}}delete"></div>
+        <script>
+            $('#{{thisCalendrier.id}}').on('show.bs.modal', function (event) {
+                var modal = $(this)
+                $.ajax({
+                    url: "{% url 'calendrier-edit' thisCalendrier.id %}",
+                    context: document.body
+                }).done(function(response) {
+                    modal.html(response);
+             });
+            })
+            $('#{{thisCalendrier.id}}delete').on('show.bs.modal', function (event) {
+                var modal = $(this)
+                $.ajax({
+                    url: "{% url 'calendrier-delete' thisCalendrier.id %}",
+                    context: document.body
+                }).done(function(response) {
+                    modal.html(response);
+             });
+            })
+        </script>
+        {% endfor %}
+{% comment %}2 - The button which shows the modal, notice the href attribute{% endcomment %}
+<p>Cliquez <a data-toggle="modal" data-target="#modal" href="{% url 'create-calendrier' obj.id %}">içi</a> Pour ajouter une disponibilité</p>
+
+{% comment %}3 - The modal container{% endcomment %}
+<div class="modal" id="modal"></div>
+
+{% comment %}4 - This js code will load the response from the href url of the showing button inside the modal{% endcomment %}
+<script>
+$('#modal').on('show.bs.modal', function (event) {
+    var modal = $(this)
+    $.ajax({
+        url: "{% url 'create-calendrier' obj.id %}",
+        context: document.body
+    }).done(function(response) {
+        modal.html(response);
+    });
+})
+</script>
+    </div>
+{% endblock %}
+
+{% block title %}
+  <h2>Calendrier</h2>
+{% endblock %}
