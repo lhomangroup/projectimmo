@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Description du logement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            margin-left: 10px;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .address-section {
+            border: 1px solid #e9ecef;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        .address-section h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .col {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Description du logement</h1>
+            <p>Annonce ID: {{ obj.id }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.titre_logement.id_for_label }}">Titre du logement:</label>
+                {{ form.titre_logement }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Description:</label>
+                {{ form.description }}
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="{{ form.nombre_personne.id_for_label }}">Nombre de personnes:</label>
+                        {{ form.nombre_personne }}
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="{{ form.pieces_couchage.id_for_label }}">Pièces de couchage:</label>
+                        {{ form.pieces_couchage }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.hebergement_choice.id_for_label }}">Type d'hébergement:</label>
+                {{ form.hebergement_choice }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.type_location_choices.id_for_label }}">Type de location:</label>
+                {{ form.type_location_choices }}
+            </div>
+
+            <div class="address-section">
+                <h3>Adresse du logement</h3>
+                <input type="hidden" name="adressComplete" value="true">
+                
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="rue">Rue:</label>
+                            <input type="text" name="rue" id="rue" value="{{ address.rue|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="voie">Voie:</label>
+                            <input type="text" name="voie" id="voie" value="{{ address.voie|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="ville">Ville:</label>
+                            <input type="text" name="ville" id="ville" value="{{ address.ville|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="region">Région:</label>
+                            <input type="text" name="region" id="region" value="{{ address.region|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="zip">Code postal:</label>
+                            <input type="text" name="zip" id="zip" value="{{ address.zipCode|default:'' }}" maxlength="5">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="pays">Pays:</label>
+                            <input type="text" name="pays" id="pays" value="{{ address.pays|default:'France' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn">Sauvegarder</button>
+                <a href="{% url 'dashboard-list' %}" class="btn btn-secondary">Retour au tableau de bord</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
