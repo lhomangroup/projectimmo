@@ -160,8 +160,25 @@ def products(request):
 
 def products_create(request):
     if request.method == 'POST':
-        # Handle form submission here
-        pass
+        nom = request.POST.get('nom')
+        prix = request.POST.get('prix')
+        tags_input = request.POST.get('tags', '')
+        
+        # Create the product
+        produit = Produit.objects.create(
+            nom=nom,
+            prix=float(prix) if prix else 0
+        )
+        
+        # Handle tags
+        if tags_input:
+            tag_names = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
+            for tag_name in tag_names:
+                tag, created = Tag.objects.get_or_create(nom=tag_name)
+                produit.tag.add(tag)
+        
+        return redirect('produit')
+    
     return render(request, 'produit/create_product.html')
 
 
