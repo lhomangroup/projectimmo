@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer une annonce - Utilisateur connecté</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .form-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .logout-link {
+            float: right;
+            color: #dc3545;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Créer une nouvelle annonce</h1>
+        <a href="/logout-annonce" class="logout-link">Se déconnecter</a>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h3>Informations sur le logement</h3>
+            
+            <div class="form-group">
+                <label for="{{ annonceForm.categorie_logement.id_for_label }}">Catégorie de logement:</label>
+                {{ annonceForm.categorie_logement }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ annonceForm.type_location_choices.id_for_label }}">Type de location:</label>
+                {{ annonceForm.type_location_choices }}
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3>Adresse du logement</h3>
+            
+            <div class="form-group">
+                <label for="rue">Rue:</label>
+                <input type="text" name="rue" id="rue">
+            </div>
+            
+            <div class="form-group">
+                <label for="voie">Voie:</label>
+                <input type="text" name="voie" id="voie">
+            </div>
+            
+            <div class="form-group">
+                <label for="ville">Ville:</label>
+                <input type="text" name="ville" id="ville" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="region">Région:</label>
+                <input type="text" name="region" id="region">
+            </div>
+            
+            <div class="form-group">
+                <label for="zip">Code postal:</label>
+                <input type="text" name="zip" id="zip" maxlength="5">
+            </div>
+            
+            <div class="form-group">
+                <label for="pays">Pays:</label>
+                <input type="text" name="pays" id="pays" value="France">
+            </div>
+        </div>
+        
+        <button type="submit">Créer l'annonce</button>
+    </form>
+    
+    <p><a href="/annonce/gerer-annonce">Gérer mes annonces existantes</a></p>
+</body>
+</html>
