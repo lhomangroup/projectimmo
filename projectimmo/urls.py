@@ -49,7 +49,7 @@ urlpatterns = [
     path('annonce/', include('annonce.urls')),
     path('client', include('client.urls')),
     path('commande', include('commande.urls')),
-   # path('compte/', include('compte.urls')),
+    path('compte/', include('compte.urls')),
     path('posts/', include('posts.urls')),
  #   path('verification/', include('verify_email.urls')),
     path('', include('workflow.urls')),
