@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ annonce.titre_logement|default:"Détails du logement" }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-link {
+            margin-bottom: 20px;
+        }
+        .annonce-header {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .annonce-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .detail-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .detail-section h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .services-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .service-tag {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        .price-section {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .price {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        @media (max-width: 768px) {
+            .annonce-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="back-link">
+        <a href="/" class="btn">← Retour à l'accueil</a>
+        <a href="/annonce/searchPage/" class="btn">Nouvelle recherche</a>
+    </div>
+
+    <div class="annonce-header">
+        <h1>{{ annonce.titre_logement|default:"Logement disponible" }}</h1>
+        {% if annonce.address %}
+        <p><strong>📍 {{ annonce.address.ville }}, {{ annonce.address.region }}</strong></p>
+        {% endif %}
+    </div>
+
+    {% if annonce.loyer_tc %}
+    <div class="price-section">
+        <div class="price">{{ annonce.loyer_tc }}€</div>
+        <p>par mois</p>
+    </div>
+    {% endif %}
+
+    <div class="annonce-details">
+        <div class="detail-section">
+            <h3>Informations générales</h3>
+            <p><strong>Type de logement :</strong> {{ annonce.get_type_location_choices_display }}</p>
+            <p><strong>Catégorie :</strong> {{ annonce.categorie_logement }}</p>
+            <p><strong>Nombre de personnes :</strong> {{ annonce.nombre_personne }}</p>
+            {% if annonce.pieces_couchage %}
+            <p><strong>Pièces de couchage :</strong> {{ annonce.pieces_couchage }}</p>
+            {% endif %}
+            {% if annonce.dureeLocationMini %}
+            <p><strong>Durée minimum :</strong> {{ annonce.dureeLocationMini }}</p>
+            {% endif %}
+            {% if annonce.dureeLocationMaxi %}
+            <p><strong>Durée maximum :</strong> {{ annonce.dureeLocationMaxi }}</p>
+            {% endif %}
+        </div>
+
+        <div class="detail-section">
+            <h3>Adresse complète</h3>
+            {% if annonce.address %}
+            <p>{{ annonce.address.rue }} {{ annonce.address.voie }}</p>
+            <p>{{ annonce.address.zipCode }} {{ annonce.address.ville }}</p>
+            <p>{{ annonce.address.region }}, {{ annonce.address.pays }}</p>
+            {% else %}
+            <p>Adresse non spécifiée</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if annonce.description %}
+    <div class="detail-section">
+        <h3>Description</h3>
+        <p>{{ annonce.description }}</p>
+    </div>
+    {% endif %}
+
+    {% if categorie_service %}
+    <div class="detail-section">
+        <h3>Services disponibles</h3>
+        <div class="services-list">
+            {% for service in categorie_service %}
+            <span class="service-tag">{{ service.nom }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if annonce.charges_loyer %}
+    <div class="detail-section">
+        <h3>Charges</h3>
+        <p><strong>Charges mensuelles :</strong> {{ annonce.charges_loyer }}€</p>
+    </div>
+    {% endif %}
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="/creer-annonce" class="btn btn-success">Créer votre propre annonce</a>
+        <a href="/login-annonce" class="btn">Se connecter</a>
+    </div>
+</body>
+</html>

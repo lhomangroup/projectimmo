@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Recherche d'annonces</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-form {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .search-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .search-btn:hover {
+            background-color: #0056b3;
+        }
+        .annonces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .annonce-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+        .annonce-card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .actions {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            text-decoration: none;
+            border-radius: 4px;
+            color: white;
+        }
+        .btn-primary {
+            background-color: #007bff;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Recherche de logements</h1>
+        <p>Trouvez le logement parfait pour votre séjour</p>
+    </div>
+
+    <div class="actions">
+        <a href="/creer-annonce" class="btn btn-primary">Créer une annonce</a>
+        <a href="/login-annonce" class="btn btn-success">Se connecter</a>
+    </div>
+
+    <form class="search-form" method="get" action="/annonce/searchPage/">
+        <div class="form-group">
+            <label for="query_ville">Ville :</label>
+            <input type="text" name="query_ville" id="query_ville" placeholder="Entrez une ville">
+        </div>
+        
+        <div class="form-group">
+            <label for="query_location">Durée de location maximale :</label>
+            <select name="query_location" id="query_location">
+                <option value="">Toutes durées</option>
+                <option value="1">1 mois</option>
+                <option value="3">3 mois</option>
+                <option value="6">6 mois</option>
+                <option value="12">12 mois</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="query_locataires">Nombre de personnes :</label>
+            <select name="query_locataires" id="query_locataires">
+                <option value="">Peu importe</option>
+                <option value="1">1 personne</option>
+                <option value="2">2 personnes</option>
+                <option value="3">3 personnes</option>
+                <option value="4">4 personnes</option>
+                <option value="5">5+ personnes</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="search-btn">Rechercher</button>
+    </form>
+
+    {% if annonce %}
+    <div class="annonces-grid">
+        <h2>Dernières annonces disponibles</h2>
+        {% for ann in annonce %}
+        <div class="annonce-card">
+            <h3>{{ ann.titre_logement|default:"Logement disponible" }}</h3>
+            <p><strong>Type :</strong> {{ ann.get_type_location_choices_display }}</p>
+            <p><strong>Catégorie :</strong> {{ ann.categorie_logement }}</p>
+            <p><strong>Nombre de personnes :</strong> {{ ann.nombre_personne }}</p>
+            {% if ann.address %}
+                <p><strong>Ville :</strong> {{ ann.address.ville }}</p>
+            {% endif %}
+            {% if ann.loyer_tc %}
+                <p><strong>Loyer :</strong> {{ ann.loyer_tc }}€</p>
+            {% endif %}
+            <a href="/annonce/detail_annonce/{{ ann.id }}" class="btn btn-primary">Voir détails</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="annonces-grid">
+        <p>Aucune annonce disponible pour le moment.</p>
+    </div>
+    {% endif %}
+</body>
+</html>
