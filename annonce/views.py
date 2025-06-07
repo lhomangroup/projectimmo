@@ -317,19 +317,21 @@ def description_view(request, pk):
 
 @login_required
 def equipment_view(request, pk):
-    form = FormEquipement()
-    requete = request.user
-    myObject = Annonce.objects.get(id=pk)
-    myEquipement = Equipement.objects.get(annonce=myObject)
-    if request.method =='POST':
+    annonce = Annonce.objects.get(id=pk)
+
+    # Créer l'objet Equipement s'il n'existe pas
+    myEquipement, created = Equipement.objects.get_or_create(annonce=annonce)
+
+    form = FormEquipement(instance=myEquipement)
+
+    if request.method == 'POST':
         form = FormEquipement(request.POST, instance=myEquipement)
         if form.is_valid():
             form.save()
-            return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
-    else:
-        form = FormEquipement(instance=myEquipement)
-    context = {'form': form, 'obj': myObject, 'requete': requete}
-    return render(request,'annonce/dashboard/equipment.html',context)
+            return redirect('dashboard')
+
+    context = {'form': form, 'annonce': annonce}
+    return render(request, 'annonce/dashboard/equipment.html', context)
 
 @login_required
 def dureeLocation_view(request, pk):
