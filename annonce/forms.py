@@ -24,10 +24,11 @@ class LoggedForm(ModelForm):
     class Meta:
         model = Annonce
         fields = ['categorie_logement', 'type_location_choices']
-        def __init__(self, *args, **kwargs):
-            super(AnnonceForm, self).__init__(*args,**kwargs)
-            self.helper = FormHelper()
-            self.helper.form_method = 'POST'
+
+    def __init__(self, *args, **kwargs):
+        super(LoggedForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'POST'
 
 class CreateUserForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):

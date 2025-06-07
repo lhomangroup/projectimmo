@@ -145,33 +145,40 @@ def logout_annonce(request):
 
 @login_required(login_url='login-annonce')
 def logged_annonce(request):
-    annonceForm = LoggedForm()
-    rue = request.POST.get('rue')
-    voie = request.POST.get('voie')
-    ville = request.POST.get('ville')
-    region = request.POST.get('region')
-    zip = request.POST.get('zip')
-    pays = request.POST.get('pays')
-
     if request.method == 'POST':
         annonceForm = AnnonceForm(request.POST)
+        rue = request.POST.get('rue')
+        voie = request.POST.get('voie')
+        ville = request.POST.get('ville')
+        region = request.POST.get('region')
+        zip = request.POST.get('zip')
+        pays = request.POST.get('pays')
 
         if annonceForm.is_valid():
-            myAdress = AdressAnnonce.objects.create(rue=rue,voie=voie,ville=ville,region=region,zipCode=zip,pays=pays)
-            myAdress.save()
-            obj = annonceForm.save(commit=False)
-            obj.address = myAdress
-            obj.save()
-            newAnnonce = annonceForm.save()
-            user_created(Annonce, request)
-            return redirect(reverse('dashboard-annonce', kwargs={'pk':newAnnonce.id}))
-
+            # Créer l'adresse
+            myAdress = AdressAnnonce.objects.create(
+                rue=rue or '',
+                voie=voie or '', 
+                ville=ville or '',
+                region=region or '',
+                zipCode=zip or '',
+                pays=pays or 'France'
+            )
+            
+            # Créer l'annonce
+            annonce = annonceForm.save(commit=False)
+            annonce.user = request.user
+            annonce.address = myAdress
+            annonce.save()
+            
+            # Créer une condition pour cette annonce
+            Condition.objects.create(annonce=annonce)
+            
+            return redirect(reverse('dashboard-annonce', kwargs={'pk': annonce.id}))
     else:
         annonceForm = AnnonceForm()
 
-
     context = {'annonceForm': annonceForm}
-
     return render(request, 'annonce/logged-annonce.html', context)
 
 @login_required
