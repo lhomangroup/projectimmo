@@ -1,11 +1,12 @@
+# .replit
 modules = ["python-3.12"]
-run = "pip install -r requirements.txt"
+run = "pip install -r requirements.txt && python manage.py migrate && python manage.py runserver 0.0.0.0:5000"
 
 [nix]
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "pip install -r requirements.txt"]
+run = ["sh", "-c", "pip install -r requirements.txt && python manage.py migrate && python manage.py runserver 0.0.0.0:5000"]
 
 [workflows]
 runButton = "Django Server"
