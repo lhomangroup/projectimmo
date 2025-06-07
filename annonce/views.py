@@ -212,6 +212,13 @@ def gerer_annonce(request):
     return render(request, 'annonce/dashboard/gerer-annonce.html', context)
 
 @login_required
+def dashboard_list(request):
+    """Vue principale du tableau de bord listant toutes les annonces de l'utilisateur"""
+    annonces = Annonce.objects.filter(user=request.user).order_by('-id')
+    context = {'annonces': annonces}
+    return render(request, 'annonce/dashboard/dashboard_list.html', context)
+
+@login_required
 def description_view(request, pk):
     form = DescriptionForm()
     myObject = Annonce.objects.get(id=pk)
