@@ -2,6 +2,7 @@ from django.urls import re_path
 from django.contrib import admin
 from django.urls import path
 from . import views
+from produit import views as produit_views
 from .views import VerificationView
 urlpatterns = [
     path('creer-annonce', views.create_annonce, name='creer-annonce'),
