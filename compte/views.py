@@ -25,8 +25,7 @@ def inscriptionPage(request):
                 user=form.save()
                 email = form.cleaned_data.get('email')
                 type_utilisateur = form.cleaned_data.get('type_utilisateur')
-                group = Group.objects.get(name='customer')
-                user.groups.add(group)
+                # Pas besoin d'ajouter des groupes pour le modèle Account personnalisé
                 Client.objects.create(
                     user=user,
                     nom=user.email,
