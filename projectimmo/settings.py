@@ -27,7 +27,18 @@ SECRET_KEY = 'django-insecure-v1tpx3$y&-gss*5&3h)cu*$#@q_rgx1=6bii!x=s-)(-@4p)9f
 DEBUG = True
 
 # original : ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['.vercel.app', '0.0.0.0', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['.vercel.app', '0.0.0.0', 'localhost', '127.0.0.1', '*', '.replit.dev']
+
+# Configuration CSRF pour Replit
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.replit.dev',
+    'https://*.replit.app',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+]
+
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'
 
 
 # Application definition
