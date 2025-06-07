@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyer - {{ obj.titre_logement }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .form-section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-check {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .form-check-input {
+            margin-right: 10px;
+        }
+        .form-check-label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+        .charge-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .charge-name {
+            flex: 1;
+            font-weight: bold;
+            color: #333;
+        }
+        .charge-options {
+            display: flex;
+            gap: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -10px;
+        }
+        .col-md-6 {
+            flex: 0 0 50%;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Loyer - {{ obj.titre_logement }}</h1>
+            <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Retour au tableau de bord</a>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            {% load crispy_forms_tags %}
+            
+            <div class="form-section">
+                <h3>Charges</h3>
+                {% for charge in charges %}
+                    <div class="charge-row">
+                        <div class="charge-name">{{ charge.nom }}</div>
+                        <div class="charge-options">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="{{ charge.nom }}" value="{{ charge.nom }}" id="inclus_{{ forloop.counter }}">
+                                <label class="form-check-label" for="inclus_{{ forloop.counter }}">
+                                    Inclus
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="{{ charge.nom }}" value="" id="non_inclus_{{ forloop.counter }}">
+                                <label class="form-check-label" for="non_inclus_{{ forloop.counter }}">
+                                    Non Inclus
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-section">
+                <h3>Informations sur le loyer</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form.loyer_tc|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.charges_loyer|as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button type="submit" class="btn">Sauvegarder</button>
+                <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
