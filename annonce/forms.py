@@ -171,4 +171,9 @@ class UserModif(ModelForm):
             'last_name': 'Nom de famille',
             'telephone': 'Téléphone',
             'email': 'Adresse email',
-        }m_method = 'POST'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(UserModif, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'POST'

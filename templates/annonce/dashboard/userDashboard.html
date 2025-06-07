@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes coordonnées - {{ obj.titre_logement }}</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,13 +43,20 @@
         .form-group {
             margin-bottom: 20px;
         }
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
             color: #333;
         }
-        input[type="text"], input[type="email"], input[type="tel"] {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -78,28 +85,6 @@
         .btn-secondary:hover {
             background-color: #545b62;
         }
-        .alert {
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-        .form-row .form-group {
-            flex: 1;
-        }
     </style>
 </head>
 <body>
@@ -109,39 +94,21 @@
             <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Retour au tableau de bord</a>
         </div>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-
         <form method="post">
             {% csrf_token %}
-            
+
             <div class="form-section">
                 <h2>Informations personnelles</h2>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
                         {{ form.first_name }}
-                        {% if form.first_name.errors %}
-                            {% for error in form.first_name.errors %}
-                                <div class="alert alert-error">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
                         {{ form.last_name }}
-                        {% if form.last_name.errors %}
-                            {% for error in form.last_name.errors %}
-                                <div class="alert alert-error">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
                     </div>
                 </div>
 
@@ -149,37 +116,28 @@
                     <div class="form-group">
                         <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
                         {{ form.email }}
-                        {% if form.email.errors %}
-                            {% for error in form.email.errors %}
-                                <div class="alert alert-error">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.telephone.id_for_label }}">{{ form.telephone.label }}</label>
                         {{ form.telephone }}
-                        {% if form.telephone.errors %}
-                            {% for error in form.telephone.errors %}
-                                <div class="alert alert-error">{{ error }}</div>
-                            {% endfor %}
-                        {% endif %}
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
                 <h2>Adresse</h2>
-                
+                <input type="hidden" name="adressComplete" id="adressComplete" value="">
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="rue">Numéro et rue</label>
                         <input type="text" id="rue" name="rue" value="{{ address.rue|default:'' }}" placeholder="123 rue de la Paix">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="voie">Complément d'adresse</label>
-                        <input type="text" id="voie" name="voie" value="{{ address.voie|default:'' }}" placeholder="Bâtiment A, Apt 42">
+                        <input type="text" id="voie" name="voie" value="{{ address.voie|default:'' }}" placeholder="Appartement, étage, etc.">
                     </div>
                 </div>
 
@@ -188,7 +146,7 @@
                         <label for="ville">Ville</label>
                         <input type="text" id="ville" name="ville" value="{{ address.ville|default:'' }}" placeholder="Paris">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="zip">Code postal</label>
                         <input type="text" id="zip" name="zip" value="{{ address.zipCode|default:'' }}" placeholder="75001">
@@ -200,7 +158,7 @@
                         <label for="region">Région</label>
                         <input type="text" id="region" name="region" value="{{ address.region|default:'' }}" placeholder="Île-de-France">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="pays">Pays</label>
                         <input type="text" id="pays" name="pays" value="{{ address.pays|default:'France' }}" placeholder="France">
@@ -214,5 +172,20 @@
             </div>
         </form>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            // Mettre à jour le champ adressComplete quand les champs d'adresse changent
+            $('input[name="rue"], input[name="voie"], input[name="ville"], input[name="zip"], input[name="region"], input[name="pays"]').on('input', function() {
+                var adresse = $('input[name="rue"]').val() + ' ' + 
+                             $('input[name="voie"]').val() + ' ' + 
+                             $('input[name="ville"]').val() + ' ' + 
+                             $('input[name="zip"]').val() + ' ' + 
+                             $('input[name="region"]').val() + ' ' + 
+                             $('input[name="pays"]').val();
+                $('#adressComplete').val(adresse.trim());
+            });
+        });
+    </script>
 </body>
 </html>

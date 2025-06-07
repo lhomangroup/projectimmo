@@ -487,45 +487,44 @@ def diagnsotic_view(request, pk):
 
 @login_required()
 def user_view_dashboard(request, pk):
-
     myObject = Annonce.objects.get(id=pk)
     user = request.user
-    form = UserModif(instance=user)
-    rue = request.POST.get('rue')
-    voie = request.POST.get('voie')
-    ville = request.POST.get('ville')
-    region = request.POST.get('region')
-    zip = request.POST.get('zip')
-    pays = request.POST.get('pays')
+    
     try:
         myAdress = Address.objects.get(account=user)
     except Address.DoesNotExist:
         # Créer une adresse vide si elle n'existe pas
         myAdress = Address.objects.create(account=user)
-    address = request.POST.get('adressComplete')
 
     if request.method == 'POST':
         form = UserModif(request.POST, instance=user)
+        rue = request.POST.get('rue', '')
+        voie = request.POST.get('voie', '')
+        ville = request.POST.get('ville', '')
+        region = request.POST.get('region', '')
+        zip_code = request.POST.get('zip', '')
+        pays = request.POST.get('pays', '')
+        address_complete = request.POST.get('adressComplete', '')
+
         if form.is_valid():
-            if address == '':
-                form.save()
-                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
-            else:
+            # Sauvegarder les informations utilisateur
+            form.save()
+            
+            # Mettre à jour l'adresse si des données sont fournies
+            if any([rue, voie, ville, region, zip_code, pays]):
                 myAdress.rue = rue
                 myAdress.voie = voie
                 myAdress.ville = ville
                 myAdress.region = region
-                myAdress.zipCode = zip
+                myAdress.zipCode = zip_code
                 myAdress.pays = pays
                 myAdress.save()
-                user = form.save()
-                form.save()
-                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+            
+            return redirect('dashboard-annonce', pk=myObject.id)
     else:
         form = UserModif(instance=user)
 
     context = {'form': form, 'obj': myObject, 'address': myAdress}
-
     return render(request, 'annonce/dashboard/userDashboard.html', context)
 
 def verification_view(request, pk):
