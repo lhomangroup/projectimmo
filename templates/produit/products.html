@@ -1,0 +1,36 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Liste des Produits{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Liste des Produits</h1>
+    
+    <div class="products-list">
+        {% if produits %}
+            {% for produit in produits %}
+                <div class="product-item">
+                    <h3>{{ produit.nom }}</h3>
+                    <p>Prix: {{ produit.prix }}€</p>
+                    <p>Date de création: {{ produit.date_creation }}</p>
+                    {% if produit.tag.all %}
+                        <p>Tags: 
+                        {% for tag in produit.tag.all %}
+                            {{ tag.nom }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Aucun produit disponible.</p>
+        {% endif %}
+    </div>
+    
+    <div class="navigation">
+        <a href="{% url 'acceuil' %}">Retour à l'accueil</a>
+        <a href="{% url 'creer_produit' %}">Créer un nouveau produit</a>
+    </div>
+</div>
+{% endblock %}

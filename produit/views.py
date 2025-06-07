@@ -152,17 +152,32 @@ def home(request):
     return render(request, 'produit/home.html')
 
 
-def products():
-    return None
+def products(request):
+    produits = Produit.objects.all()
+    context = {'produits': produits}
+    return render(request, 'produit/products.html', context)
 
 
-def products_create():
-    return None
+def products_create(request):
+    if request.method == 'POST':
+        # Handle form submission here
+        pass
+    return render(request, 'produit/create_product.html')
 
 
-def products_update():
-    return None
+def products_update(request, pk):
+    produit = Produit.objects.get(id=pk)
+    if request.method == 'POST':
+        # Handle form submission here
+        pass
+    context = {'produit': produit}
+    return render(request, 'produit/update_product.html', context)
 
 
-def products_delete():
-    return None
+def products_delete(request, pk):
+    produit = Produit.objects.get(id=pk)
+    if request.method == 'POST':
+        produit.delete()
+        return redirect('produit')
+    context = {'produit': produit}
+    return render(request, 'produit/delete_product.html', context)
