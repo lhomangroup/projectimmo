@@ -54,11 +54,11 @@ def create_annonce(request):
         # - validate both forms
         if userForm.is_valid() and annonceForm.is_valid():
             user = userForm.save()
-            
+
             # CORRECTION: Activer automatiquement le compte
             user.is_active = True
             user.save()
-            
+
             email = userForm.cleaned_data['email']
             annonce = annonceForm.save()
             myAdress = AdressAnnonce.objects.create(rue=rue,voie=voie,ville=ville,region=region,zipCode=zip,pays=pays)
@@ -68,7 +68,7 @@ def create_annonce(request):
             lastAnnonce.user = user
             lastAnnonce.address = myAdress
             lastAnnonce.save()
-            
+
             # Gérer l'upload d'images multiples
             uploaded_images = request.FILES.getlist('images')
             for image in uploaded_images:
@@ -76,7 +76,7 @@ def create_annonce(request):
                     annonce=lastAnnonce,
                     images=image
                 )
-            
+
             Condition.objects.create(
                 annonce=annonce,
             )
@@ -132,7 +132,7 @@ def inscriptionPage(request):
         form=CreateUserForm(request.POST)
         if form.is_valid():
                 user=form.save()
-                
+
                 # CORRECTION: Activer automatiquement le compte
                 user.is_active = True
                 user.save()
@@ -167,7 +167,7 @@ def logged_annonce(request):
     if request.method == 'POST':
         print(f"POST reçu pour l'utilisateur: {request.user.email}")
         print(f"Données POST: {request.POST}")
-        
+
         annonceForm = AnnonceForm(request.POST)
         rue = request.POST.get('rue')
         voie = request.POST.get('voie')
@@ -180,7 +180,7 @@ def logged_annonce(request):
         if annonceForm.is_valid():
             # Import nécessaire pour AdressAnnonce
             from annonce.models import AdressAnnonce, Condition
-            
+
             print("Création de l'adresse...")
             # Créer l'adresse
             myAdress = AdressAnnonce.objects.create(
@@ -192,7 +192,7 @@ def logged_annonce(request):
                 pays=pays or 'France'
             )
             print(f"Adresse créée: ID {myAdress.id}")
-            
+
             print("Création de l'annonce...")
             # Créer l'annonce
             annonce = annonceForm.save(commit=False)
@@ -200,7 +200,7 @@ def logged_annonce(request):
             annonce.address = myAdress
             annonce.save()
             print(f"Annonce créée: ID {annonce.id} pour l'utilisateur {annonce.user.email}")
-            
+
             # Gérer l'upload d'images multiples
             print("Traitement des images uploadées...")
             uploaded_images = request.FILES.getlist('images')
@@ -210,12 +210,12 @@ def logged_annonce(request):
                     images=image
                 )
             print(f"{len(uploaded_images)} images uploadées avec succès")
-            
+
             # Créer une condition pour cette annonce
             print("Création de la condition...")
             Condition.objects.create(annonce=annonce)
             print("Condition créée avec succès")
-            
+
             return redirect('dashboard-list')
         else:
             # Afficher les erreurs du formulaire pour debug
@@ -245,13 +245,13 @@ def dashboard_list(request):
     """Vue principale du tableau de bord listant toutes les annonces de l'utilisateur"""
     print(f"Dashboard_list appelé pour l'utilisateur: {request.user.email}")
     print(f"Utilisateur authentifié: {request.user.is_authenticated}")
-    
+
     annonces = Annonce.objects.filter(user=request.user).order_by('-id')
     print(f"Nombre d'annonces trouvées: {annonces.count()}")
-    
+
     for annonce in annonces:
         print(f"Annonce ID: {annonce.id}, Titre: {annonce.titre_logement}")
-    
+
     context = {'annonces': annonces}
     return render(request, 'annonce/dashboard/dashboard_list.html', context)
 
@@ -260,10 +260,10 @@ def description_view(request, pk):
     myObject = Annonce.objects.get(id=pk)
     requete = request.user
     myAdress = myObject.address
-    
+
     if request.method == 'POST':
         form = DescriptionForm(request.POST, instance=myObject)
-        
+
         # Récupérer les données d'adresse
         rue = request.POST.get('rue', '')
         voie = request.POST.get('voie', '')
@@ -272,11 +272,11 @@ def description_view(request, pk):
         zip = request.POST.get('zip', '')
         pays = request.POST.get('pays', 'France')
         address = request.POST.get('adressComplete')
-        
+
         if form.is_valid():
             # Sauvegarder l'annonce
             form.save()
-            
+
             # Mettre à jour l'adresse si les champs d'adresse sont fournis
             if address:
                 if myAdress:
@@ -300,39 +300,31 @@ def description_view(request, pk):
                     )
                     myObject.address = myAdress
                     myObject.save()
-            
+
             return redirect(request.META.get('HTTP_REFERER', '/annonce/dashboard/list/'))
         else:
             print("Erreurs du formulaire:", form.errors)
     else:
         form = DescriptionForm(instance=myObject)
-    
+
     context = {'form': form, 'obj': myObject, 'requete': requete, 'address': myAdress}
     return render(request,'annonce/dashboard/description.html',context)
 
 @login_required
 def equipment_view(request, pk):
-    form = EquipmentForm()
+    form = FormEquipement()
     requete = request.user
     myObject = Annonce.objects.get(id=pk)
-    services = CategorieServicesForm()
-    categories = CategorieService.objects.all()
+    myEquipement = Equipement.objects.get(annonce=myObject)
     if request.method =='POST':
-        form = EquipmentForm(request.POST, instance=myObject)
-        categorie_service = request.POST.getlist('categorie_service')
-        length = len(categorie_service)
-        for thisCategorie in categories:
-            if thisCategorie.nom in categorie_service:
-                myObject.categorie_service.add(thisCategorie)
-            elif thisCategorie.nom not in categorie_service:
-                myObject.categorie_service.remove(thisCategorie)
+        form = FormEquipement(request.POST, instance=myEquipement)
         if form.is_valid():
             form.save()
             return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
     else:
-        form = EquipmentForm(instance=myObject)
-    context = {'form': form, 'requete': requete, 'obj': myObject, 'services': services}
-    return render(request,'annonce/dashboard/equipements.html',context)
+        form = FormEquipement(instance=myEquipement)
+    context = {'form': form, 'obj': myObject, 'requete': requete}
+    return render(request,'annonce/dashboard/equipment.html',context)
 
 @login_required
 def dureeLocation_view(request, pk):
