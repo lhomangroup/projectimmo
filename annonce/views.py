@@ -187,7 +187,7 @@ def logged_annonce(request):
             Condition.objects.create(annonce=annonce)
             print("Condition créée avec succès")
             
-            return redirect(reverse('dashboard-annonce', kwargs={'pk': annonce.id}))
+            return redirect('dashboard-list')
         else:
             # Afficher les erreurs du formulaire pour debug
             print("Erreurs du formulaire:", annonceForm.errors)

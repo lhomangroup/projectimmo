@@ -46,7 +46,7 @@ urlpatterns = [
     path('account/', views.accountSettings, name='account_settings'),
     path('', include('produit.urls')),
     path('', include('conciergerie.urls')),
-    path('', include('annonce.urls')),
+    path('annonce/', include('annonce.urls')),
     path('client', include('client.urls')),
     path('commande', include('commande.urls')),
    # path('compte/', include('compte.urls')),
