@@ -1,0 +1,16 @@
+{% extends "annonce/dashboard/dashboard.html" %}
+
+ {% block content %}
+    <div class="col-md-5">
+      {% load crispy_forms_tags %}
+        <form action="" method="POST">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <input type="submit" value="Modifier">
+        </form>
+    </div>
+{% endblock %}
+
+{% block title %}
+  <h2>Conditions</h2>
+{% endblock %}
