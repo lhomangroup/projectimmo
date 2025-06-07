@@ -110,6 +110,15 @@ class FormCondition(ModelForm):
             self.helper = FormHelper()
             self.helper.form_method = 'POST'
 
+class FormEquipement(ModelForm):
+    class Meta:
+        model = Equipement
+        exclude = ['annonce']
+        def __init__(self, *args, **kwargs):
+            super(FormEquipement, self).__init__(*args,**kwargs)
+            self.helper = FormHelper()
+            self.helper.form_method = 'POST'
+
 class FormDiagnostic(ModelForm):
     class Meta:
         model = Diagnostic

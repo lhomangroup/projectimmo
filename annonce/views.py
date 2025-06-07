@@ -179,7 +179,7 @@ def logged_annonce(request):
         print(f"Form valide: {annonceForm.is_valid()}")
         if annonceForm.is_valid():
             # Import nécessaire pour AdressAnnonce
-            from annonce.models import AdressAnnonce, Condition
+            from annonce.models import AdressAnnonce, Condition, Equipement
 
             print("Création de l'adresse...")
             # Créer l'adresse
@@ -215,6 +215,11 @@ def logged_annonce(request):
             print("Création de la condition...")
             Condition.objects.create(annonce=annonce)
             print("Condition créée avec succès")
+
+            # Créer un équipement pour cette annonce
+            print("Création de l'équipement...")
+            Equipement.objects.create(annonce=annonce)
+            print("Équipement créé avec succès")
 
             return redirect('dashboard-list')
         else:

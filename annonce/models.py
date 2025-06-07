@@ -244,6 +244,19 @@ class Condition(models.Model):
     fumeur_accepte = models.BooleanField(choices=choice_bool, default=1)
     animaux_accepte = models.BooleanField(choices=choice_bool, default=1)
 
+class Equipement(models.Model):
+    annonce = models.OneToOneField(
+        Annonce,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
+    # Vous pouvez ajouter d'autres champs d'équipement ici selon vos besoins
+    # Par exemple :
+    # wifi = models.BooleanField(default=False)
+    # television = models.BooleanField(default=False)
+    # lave_vaisselle = models.BooleanField(default=False)
+    # etc.
+
 class Diagnostic(models.Model):
     annonce = models.OneToOneField(
         Annonce,
