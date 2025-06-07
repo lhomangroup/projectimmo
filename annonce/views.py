@@ -214,7 +214,15 @@ def gerer_annonce(request):
 @login_required
 def dashboard_list(request):
     """Vue principale du tableau de bord listant toutes les annonces de l'utilisateur"""
+    print(f"Dashboard_list appelé pour l'utilisateur: {request.user.email}")
+    print(f"Utilisateur authentifié: {request.user.is_authenticated}")
+    
     annonces = Annonce.objects.filter(user=request.user).order_by('-id')
+    print(f"Nombre d'annonces trouvées: {annonces.count()}")
+    
+    for annonce in annonces:
+        print(f"Annonce ID: {annonce.id}, Titre: {annonce.titre_logement}")
+    
     context = {'annonces': annonces}
     return render(request, 'annonce/dashboard/dashboard_list.html', context)
 
