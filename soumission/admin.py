@@ -12,8 +12,8 @@ from django.contrib.admin import AdminSite
 
 from django.forms.models import BaseInlineFormSet
 
-from inline_actions.admin import InlineActionsMixin
-from inline_actions.admin import InlineActionsModelAdminMixin
+# Removed incompatible inline_actions imports
+
 
 from django.db.models import Case, Count, Max, Min, Q, Sum
 
@@ -28,7 +28,7 @@ from django.shortcuts import redirect
 
 from django.shortcuts import render
 
-from inline_actions.admin import InlineActionsModelAdminMixin
+# Removed duplicate import
 
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
@@ -57,7 +57,7 @@ class PlanningAdmin(admin.ModelAdmin):
     list_filter = ('pla_intitule',)
 
 
-class VisiteAdmin(InlineActionsMixin, admin.TabularInline):
+class VisiteAdmin(admin.TabularInline):
 
     pass
     model = VisiteVit
@@ -72,7 +72,7 @@ class VisiteAdmin(InlineActionsMixin, admin.TabularInline):
 
 
 # @admin.register(BilanBil)
-class BilanAdmin(InlineActionsMixin, admin.TabularInline):
+class BilanAdmin(admin.TabularInline):
 
     pass
     model = BilanBil
@@ -86,7 +86,7 @@ class BilanAdmin(InlineActionsMixin, admin.TabularInline):
 
 
 # @admin.register(RecommandationNek)
-class RecommandationAdmin(InlineActionsMixin, admin.TabularInline):
+class RecommandationAdmin(admin.TabularInline):
 
     pass
     model = RecommandationNek
@@ -100,7 +100,7 @@ class RecommandationAdmin(InlineActionsMixin, admin.TabularInline):
 
 
 # @admin.register(RecommandationNek)
-class CommentaireAdmin(InlineActionsMixin, admin.TabularInline):
+class CommentaireAdmin(admin.TabularInline):
 
     pass
     model = CommentaireDem
@@ -114,7 +114,7 @@ class CommentaireAdmin(InlineActionsMixin, admin.TabularInline):
 
 
 @admin.register(ClientCli)
-class ClientAdmin(admin.ModelAdmin, InlineActionsModelAdminMixin):
+class ClientAdmin(admin.ModelAdmin):
 
     pass
 
