@@ -1,4 +1,3 @@
-
 from django.db import models
 import datetime
 # debut code pour User= Client
@@ -6,17 +5,26 @@ from django.conf import settings
 # fin code pour User= Client
 from django.utils.translation import gettext_lazy as _
 from address.models import AddressField, Country, State
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 # Create your models here.
+TYPE_UTILISATEUR_CHOICES = [
+    ('locataire', 'Locataire'),
+    ('proprietaire', 'Propriétaire'),
+    ('partenaire', 'Partenaire'),
+]
+
 class Client(models.Model):
-    user=models.OneToOneField(settings.AUTH_USER_MODEL,null=True, on_delete=models.CASCADE)
-    nom=models.CharField(max_length=200, null=True)
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    nom = models.CharField(max_length=200, null=True)
     prenom = models.CharField(max_length=200, null=True)
-    telephone=models.CharField(max_length=200, null=True)
+    telephone = models.CharField(max_length=200, null=True)
     email = models.EmailField(max_length=200, null=True)
     profile_pic = models.ImageField(null=True, blank=True)
-    date_creation=models.DateTimeField(auto_now_add=True, null=True)
+    type_utilisateur = models.CharField(max_length=20, choices=TYPE_UTILISATEUR_CHOICES, default='locataire', null=True)
+    date_creation = models.DateTimeField(auto_now_add=True, null=True)
     class PackageChoices(models.TextChoices):
         PACK_DOSSIER = 'PDOS', _('Pack Dossier')
         PACK_VISITES = 'PVST', _('Pack Visite')
@@ -64,10 +72,10 @@ class Client(models.Model):
     document_quittance = models.FileField(blank=True, null=True,
                                               upload_to='documents/', verbose_name="Pièce 3: 3 dernières quittance de loyers")
 
-def __str__(self):
-    return self.nom
+    def __str__(self):
+        return self.nom
 
-class Meta:
-    managed = True
-    db_table = 'client'
-    verbose_name = 'Client'
+    class Meta:
+        managed = True
+        db_table = 'client'
+        verbose_name = 'Client'

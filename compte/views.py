@@ -24,11 +24,13 @@ def inscriptionPage(request):
         if form.is_valid():
                 user=form.save()
                 username = form.cleaned_data.get('username')
+                type_utilisateur = form.cleaned_data.get('type_utilisateur')
                 group = Group.objects.get(name='customer')
                 user.groups.add(group)
                 Client.objects.create(
                     user=user,
                     nom=user.username,
+                    type_utilisateur=type_utilisateur,
                 )
                 messages.success(request,'compte cree avec succes pour '+username)
                 return redirect('acces')

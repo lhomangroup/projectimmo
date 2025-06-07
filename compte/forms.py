@@ -10,11 +10,22 @@ from django import forms
 
 from .models import *
 
+TYPE_UTILISATEUR_CHOICES = [
+    ('locataire', 'Locataire'),
+    ('proprietaire', 'Propriétaire'),
+    ('partenaire', 'Partenaire'),
+]
 
 class CreerUtilisateur(UserCreationForm):
+    type_utilisateur = forms.ChoiceField(
+        choices=TYPE_UTILISATEUR_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Type d\'utilisateur'
+    )
+
     class Meta:
         model=User
-        fields=['username','email','password1','password2']
+        fields=['username','email','type_utilisateur','password1','password2']
 
 
 class CustomerForm(ModelForm):
