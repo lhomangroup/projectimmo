@@ -1,0 +1,27 @@
+{% extends "annonce/dashboard/dashboard.html" %}
+
+ {% block content %}
+    <div class="col-md-5">
+      {% load crispy_forms_tags %}
+        <form action="" method="POST">
+          {% csrf_token %}
+          {{ form|crispy }}
+            <h2>Vos équipements :</h2>
+                 {{obj.equipements.all|join:", "}}
+            <h2>Vos services</h2>
+            {% for x,y in services.fields.categorie.choices %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="categorie_service" {% if y in annonce.categorie_service.nom %} checked {% endif %} value="{{ y }}" id="defaultCheck{{ x }}">
+                  <label class="form-check-label" for="defaultCheck{{ x }}">
+                      {{ y }}
+                  </label>
+                </div>
+            {% endfor %}
+          <input type="submit" value="Modifier">
+        </form>
+    </div>
+{% endblock %}
+
+{% block title %}
+  <h2>Modifiez vos équipements</h2>
+{% endblock %}
