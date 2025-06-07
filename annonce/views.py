@@ -54,6 +54,11 @@ def create_annonce(request):
         # - validate both forms
         if userForm.is_valid() and annonceForm.is_valid():
             user = userForm.save()
+            
+            # CORRECTION: Activer automatiquement le compte
+            user.is_active = True
+            user.save()
+            
             email = userForm.cleaned_data['email']
             annonce = annonceForm.save()
             myAdress = AdressAnnonce.objects.create(rue=rue,voie=voie,ville=ville,region=region,zipCode=zip,pays=pays)
@@ -117,6 +122,10 @@ def inscriptionPage(request):
         form=CreateUserForm(request.POST)
         if form.is_valid():
                 user=form.save()
+                
+                # CORRECTION: Activer automatiquement le compte
+                user.is_active = True
+                user.save()
 
                 return redirect('acces')
     context={'form':form}

@@ -23,15 +23,27 @@ def inscriptionPage(request):
         form=CreerUtilisateur(request.POST)
         if form.is_valid():
                 user=form.save()
+                
+                # CORRECTION 1: Activer automatiquement le compte
+                user.is_active = True
+                user.save()
+                
                 email = form.cleaned_data.get('email')
                 type_utilisateur = form.cleaned_data.get('type_utilisateur')
-                # Pas besoin d'ajouter des groupes pour le modèle Account personnalisé
-                Client.objects.create(
-                    user=user,
-                    nom=user.email,
-                    type_utilisateur=type_utilisateur,
-                )
-                messages.success(request,'compte cree avec succes pour '+email)
+                
+                # CORRECTION 2: Créer systématiquement le profil Client
+                try:
+                    # Vérifier si le profil Client existe déjà
+                    client = Client.objects.get(user=user)
+                except Client.DoesNotExist:
+                    # Créer le profil Client s'il n'existe pas
+                    Client.objects.create(
+                        user=user,
+                        nom=user.email,
+                        type_utilisateur=type_utilisateur,
+                    )
+                
+                messages.success(request,'Compte créé avec succès pour '+email+'. Vous pouvez maintenant vous connecter.')
                 return redirect('acces')
     context={'form':form}
     return render(request,'compte/inscription.html',context)
