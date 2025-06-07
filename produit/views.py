@@ -163,22 +163,22 @@ def products_create(request):
         nom = request.POST.get('nom')
         prix = request.POST.get('prix')
         tags_input = request.POST.get('tags', '')
-        
+
         # Create the product
         produit = Produit.objects.create(
             nom=nom,
             prix=float(prix) if prix else 0
         )
-        
+
         # Handle tags
         if tags_input:
             tag_names = [tag.strip() for tag in tags_input.split(',') if tag.strip()]
             for tag_name in tag_names:
                 tag, created = Tag.objects.get_or_create(nom=tag_name)
                 produit.tag.add(tag)
-        
-        return redirect('produit')
-    
+
+        return redirect('products')
+
     return render(request, 'produit/create_product.html')
 
 
@@ -195,6 +195,6 @@ def products_delete(request, pk):
     produit = Produit.objects.get(id=pk)
     if request.method == 'POST':
         produit.delete()
-        return redirect('produit')
+        return redirect('products')
     context = {'produit': produit}
     return render(request, 'produit/delete_product.html', context)
