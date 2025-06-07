@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Équipements - {{ obj.titre_logement }}</title>
+    <title>Équipements - {{ annonce.titre_logement }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,6 +31,18 @@
         .form-group {
             margin-bottom: 20px;
         }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .form-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
         label {
             display: block;
             margin-bottom: 5px;
@@ -43,6 +55,27 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
+        }
+        .form-check {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .form-check-input {
+            width: auto;
+            margin-right: 10px;
+        }
+        .form-check-label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+        .equipements-list {
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            color: #666;
         }
         .btn {
             background-color: #007bff;
@@ -75,8 +108,41 @@
         <form method="post">
             {% csrf_token %}
             
-            <div class="form-group">
-                {{ form.as_p }}
+            <div class="form-section">
+                <h2>Modifiez vos équipements</h2>
+                
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+
+                <div class="form-group">
+                    <h3>Vos équipements actuels :</h3>
+                    <div class="equipements-list">
+                        {% if annonce.equipements.all %}
+                            {{ annonce.equipements.all|join:", " }}
+                        {% else %}
+                            Aucun équipement défini
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Vos services</h2>
+                {% if services %}
+                    {% for x,y in services.fields.categorie.choices %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="categorie_service" 
+                                   {% if y in annonce.categorie_service.nom %} checked {% endif %} 
+                                   value="{{ y }}" id="defaultCheck{{ x }}">
+                            <label class="form-check-label" for="defaultCheck{{ x }}">
+                                {{ y }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Aucun service disponible pour le moment.</p>
+                {% endif %}
             </div>
 
             <div style="margin-top: 30px;">
@@ -86,4 +152,4 @@
         </form>
     </div>
 </body>
-</html>l>
+</html>
