@@ -328,7 +328,7 @@ def equipment_view(request, pk):
         form = FormEquipement(request.POST, instance=myEquipement)
         if form.is_valid():
             form.save()
-            return redirect('dashboard')
+            return redirect('dashboard-annonce', pk=annonce.id)
 
     context = {'form': form, 'annonce': annonce}
     return render(request, 'annonce/dashboard/equipment.html', context)
