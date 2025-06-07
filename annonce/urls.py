@@ -14,6 +14,7 @@ urlpatterns = [
     path('activate/<uidb64>/<token>', VerificationView.as_view(), name='activate'),
     path('annonce/gerer-annonce', views.gerer_annonce, name='gerer-annonce'),
     path('annonce/dashboard/', views.dashboard_list, name='dashboard-list'),
+    path('annonce/dashboard', views.dashboard_list, name='dashboard-list-alt'),
     path('annonce/dashboard/<str:pk>', views.dashboard_view, name='dashboard-annonce'),
     path('annonce/dashboard/description/<str:pk>/', views.description_view, name='dashboard-description'),
     path('annonce/dashboard/dureeLocation/<str:pk>/', views.dureeLocation_view, name='dashboard-dureelocation'),
