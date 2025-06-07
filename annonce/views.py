@@ -1,6 +1,6 @@
 from pyexpat.errors import messages
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.baseconv import base64
 from django.views import View
 
@@ -589,3 +589,18 @@ def profile_annonce(request):
     context = {'reservation': reservations, 'form': form, 'workflow': workflow, 'annonce': annonce, 'address': myAdress}
 
     return render(request, 'compte/profile_annonce.html', context)
+
+def user_coord_dashboard(request, pk):
+    myObject = get_object_or_404(Annonce, pk=pk)
+    myAdress = myObject.address
+
+    if request.method == 'POST':
+        form = UserModif(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect(request.META.get('HTTP_REFERER', '/annonce/dashboard/list/'))
+    else:
+        form = UserModif(instance=request.user)
+
+    context = {'form': form, 'obj': myObject, 'address': myAdress}
+    return render(request, 'annonce/dashboard/usercoord.html', context)
