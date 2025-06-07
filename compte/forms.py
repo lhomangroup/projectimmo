@@ -13,15 +13,11 @@ TYPE_UTILISATEUR_CHOICES = [
 ]
 
 class CreerUtilisateur(UserCreationForm):
-    type_utilisateur = forms.ChoiceField(
-        choices=TYPE_UTILISATEUR_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label='Type d\'utilisateur'
-    )
+    type_utilisateur = forms.ChoiceField(choices=TYPE_UTILISATEUR_CHOICES)
 
     class Meta:
-        model=User
-        fields=['username','email','type_utilisateur','password1','password2']
+        model = User
+        fields = ['email', 'first_name', 'last_name', 'telephone', 'password1', 'password2', 'type_utilisateur']
 
 
 class CustomerForm(ModelForm):

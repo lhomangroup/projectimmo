@@ -23,16 +23,16 @@ def inscriptionPage(request):
         form=CreerUtilisateur(request.POST)
         if form.is_valid():
                 user=form.save()
-                username = form.cleaned_data.get('username')
+                email = form.cleaned_data.get('email')
                 type_utilisateur = form.cleaned_data.get('type_utilisateur')
                 group = Group.objects.get(name='customer')
                 user.groups.add(group)
                 Client.objects.create(
                     user=user,
-                    nom=user.username,
+                    nom=user.email,
                     type_utilisateur=type_utilisateur,
                 )
-                messages.success(request,'compte cree avec succes pour '+username)
+                messages.success(request,'compte cree avec succes pour '+email)
                 return redirect('acces')
     context={'form':form}
     return render(request,'compte/inscription.html',context)
