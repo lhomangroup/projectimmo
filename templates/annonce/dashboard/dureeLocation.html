@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Durée Location - {{ obj.titre_logement }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .form-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .radio-group {
+            margin-bottom: 20px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .radio-option:hover {
+            background-color: #f8f9fa;
+        }
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+        }
+        .radio-option label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+            color: #333;
+        }
+        form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        form.shown {
+            display: block;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Durée Location - {{ obj.titre_logement }}</h1>
+            <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Retour au tableau de bord</a>
+        </div>
+
+        <div class="form-section">
+            <h2>Définir la durée de location</h2>
+            
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" name="myRadios" value="0" id="moyenne_duree_radio">
+                    <label for="moyenne_duree_radio">Moyenne Durée (3-12 mois)</label>
+                </div>
+                
+                <div class="radio-option">
+                    <input type="radio" name="myRadios" value="1" id="longue_duree_radio">
+                    <label for="longue_duree_radio">Longue Durée (plus de 12 mois)</label>
+                </div>
+                
+                <div class="radio-option">
+                    <input type="radio" name="myRadios" value="2" id="toute_duree_radio">
+                    <label for="toute_duree_radio">Toute durée (flexible)</label>
+                </div>
+            </div>
+
+            <!-- Formulaire pour Moyenne Durée -->
+            <form action="" method="POST" id="moyenne_duree">
+                {% csrf_token %}
+                <h3>Configuration Moyenne Durée</h3>
+                
+                <div class="input-group">
+                    <label for="minSelect1">Durée Minimum :</label>
+                    <select class="custom-select" name="minSelect" id="minSelect1">
+                        <option selected value="3mois">3 mois</option>
+                        <option value="4mois">4 mois</option>
+                        <option value="6mois">6 mois</option>
+                        <option value="1an">1 an</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="maxSelect1">Durée Maximum :</label>
+                    <select name="selectMax" class="custom-select" id="maxSelect1">
+                        <option value="3mois">3 mois</option>
+                        <option value="4mois">4 mois</option>
+                        <option value="5mois">5 mois</option>
+                        <option value="6mois">6 mois</option>
+                        <option value="7mois">7 mois</option>
+                        <option value="8mois">8 mois</option>
+                        <option value="9mois">9 mois</option>
+                        <option value="10mois">10 mois</option>
+                        <option value="11mois">11 mois</option>
+                        <option selected value="1an">1 an</option>
+                    </select>
+                </div>
+                
+                <input type="submit" value="Modifier">
+            </form>
+
+            <!-- Formulaire pour Longue Durée -->
+            <form action="" method="POST" id="longue_duree">
+                {% csrf_token %}
+                <h3>Configuration Longue Durée</h3>
+                
+                <div class="input-group">
+                    <label for="minSelect2">Durée Minimum :</label>
+                    <select class="custom-select" name="minSelect" id="minSelect2">
+                        <option value="6mois">6 mois</option>
+                        <option selected value="1an">1 an</option>
+                        <option value="2ans">2 ans</option>
+                        <option value="3ans">3 ans</option>
+                    </select>
+                </div>
+                
+                <input type="submit" value="Modifier">
+            </form>
+
+            <!-- Formulaire pour Toute Durée -->
+            <form action="" method="POST" id="toute_duree">
+                {% csrf_token %}
+                <h3>Configuration Flexible</h3>
+                
+                <div class="input-group">
+                    <label for="minSelect3">Durée Minimum Préférée :</label>
+                    <select class="custom-select" name="minSelect" id="minSelect3">
+                        <option selected value="3mois">3 mois</option>
+                        <option value="4mois">4 mois</option>
+                        <option value="6mois">6 mois</option>
+                        <option value="1an">1 an</option>
+                    </select>
+                </div>
+                
+                <input type="submit" value="Modifier">
+            </form>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Retour au tableau de bord</a>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            var radios = document.getElementsByName("myRadios");
+            var forms = document.querySelectorAll("form[id$='_duree']");
+            var previousRadio = null;
+
+            for (var i = 0; i < radios.length; i++) {
+                radios[i].addEventListener('change', function() {
+                    if (this !== previousRadio) {
+                        previousRadio = this;
+                        
+                        // Masquer tous les formulaires
+                        forms.forEach(function(form) {
+                            form.classList.remove('shown');
+                        });
+                        
+                        // Afficher le formulaire correspondant
+                        var targetFormId = '';
+                        switch(this.value) {
+                            case '0':
+                                targetFormId = 'moyenne_duree';
+                                break;
+                            case '1':
+                                targetFormId = 'longue_duree';
+                                break;
+                            case '2':
+                                targetFormId = 'toute_duree';
+                                break;
+                        }
+                        
+                        var targetForm = document.getElementById(targetFormId);
+                        if (targetForm) {
+                            targetForm.classList.add('shown');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
