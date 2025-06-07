@@ -1,0 +1,104 @@
+{% extends "annonce/dashboard/dashboard.html" %}
+
+
+ {% block content %}
+<style type="text/css">
+    form {
+        display: none;
+    }
+    .shown {
+        display : block;
+    }
+</style>
+    <div class="col-md-5">
+      {% load crispy_forms_tags %}
+        <p>Moyenne Duree</p><input type="radio" name="myRadios" value="0" />
+
+        <p>Longue Duree</p><input type="radio" name="myRadios" value="1" />
+        <p>Toute duree </p> <input type="radio" name="myRadios" value="2" />
+        <form action="" method="POST" id="toute_duree">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Options</label>
+              </div>
+              <select class="custom-select" name="minSelect" id="inputGroupSelect01">
+                <option selected value="3mois">3 mois</option>
+                <option value="4mois">4 mois</option>
+                <option value="6mois">6 mois</option>
+                  <option value="1an">1 an</option>
+              </select>
+            </div>
+            <input type="submit" value="Modifier">
+        </form>
+        <form action="" method="POST" id="moyenne_duree">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Duree Minimum</label>
+              </div>
+              <select class="custom-select" name="minSelect" id="inputGroupSelect01">
+                <option selected value="3mois">3 mois</option>
+                <option value="4mois">4 mois</option>
+                <option value="6mois">6 mois</option>
+                  <option value="1an">1 an</option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Duree Minimum</label>
+              </div>
+              <select name="selectMax" class="custom-select" id="inputGroupSelect01">
+                <option selected value="3mois">3 mois</option>
+                <option value="4mois">4 mois</option>
+                <option value="5mois">5 mois</option>
+                  <option value="6mois">6 mois</option>
+                  <option value="7mois">7 mois</option>
+                  <option value="8mois">8 mois</option>
+                  <option value="9mois">9 mois</option>
+                  <option value="10mois">10 mois</option
+                  <option value="11mois">11 mois</option>>
+                  <option value="1an">1 an</option>
+              </select>
+            </div>
+            <input type="submit" value="Modifier">
+        </form>
+        <form action="" method="POST" >
+          {% csrf_token %}
+            <select class="custom-select" name="minSelect" id="inputGroupSelect01">
+                <option selected value="3mois">3 mois</option>
+                <option value="4mois">4 mois</option>
+                <option value="6mois">6 mois</option>
+                <option value="1an">1 an</option>
+              </select>
+          <input type="submit" value="Modifier">
+        </form>
+    </div>
+
+<script>
+window.addEventListener('load', (event) => {
+
+    var rad = document.getElementsByName("myRadios");
+    var form = document.getElementsByTagName("form");
+    var prev = null;
+    for (var i = 0; i < rad.length; i++) {
+        rad[i].addEventListener('change', function() {
+            (prev) ? console.log(prev.value): null;
+            if (this !== prev)  {
+                prev = this;
+                for(let x=0; x < form.length; x++){
+                    form[x].classList.remove('shown');
+                }
+                form[prev.value].classList.add('shown');
+            }
+        });
+    }
+});
+
+</script>
+{% endblock %}
+
+{% block title %}
+  <h2>Durée Location</h2>
+{% endblock %}
+
