@@ -146,6 +146,9 @@ def logout_annonce(request):
 @login_required(login_url='login-annonce')
 def logged_annonce(request):
     if request.method == 'POST':
+        print(f"POST reçu pour l'utilisateur: {request.user.email}")
+        print(f"Données POST: {request.POST}")
+        
         annonceForm = AnnonceForm(request.POST)
         rue = request.POST.get('rue')
         voie = request.POST.get('voie')
@@ -154,10 +157,12 @@ def logged_annonce(request):
         zip = request.POST.get('zip')
         pays = request.POST.get('pays')
 
+        print(f"Form valide: {annonceForm.is_valid()}")
         if annonceForm.is_valid():
             # Import nécessaire pour AdressAnnonce
             from annonce.models import AdressAnnonce, Condition
             
+            print("Création de l'adresse...")
             # Créer l'adresse
             myAdress = AdressAnnonce.objects.create(
                 rue=rue or '',
@@ -167,20 +172,26 @@ def logged_annonce(request):
                 zipCode=zip or '',
                 pays=pays or 'France'
             )
+            print(f"Adresse créée: ID {myAdress.id}")
             
+            print("Création de l'annonce...")
             # Créer l'annonce
             annonce = annonceForm.save(commit=False)
             annonce.user = request.user
             annonce.address = myAdress
             annonce.save()
+            print(f"Annonce créée: ID {annonce.id} pour l'utilisateur {annonce.user.email}")
             
             # Créer une condition pour cette annonce
+            print("Création de la condition...")
             Condition.objects.create(annonce=annonce)
+            print("Condition créée avec succès")
             
             return redirect(reverse('dashboard-annonce', kwargs={'pk': annonce.id}))
         else:
             # Afficher les erreurs du formulaire pour debug
             print("Erreurs du formulaire:", annonceForm.errors)
+            print("Données POST reçues:", request.POST)
     else:
         annonceForm = AnnonceForm()
 
