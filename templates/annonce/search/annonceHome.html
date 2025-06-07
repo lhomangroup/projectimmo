@@ -100,6 +100,7 @@
     </div>
 
     <form class="search-form" method="get" action="/annonce/searchPage/">
+        {% csrf_token %}
         <div class="form-group">
             <label for="query_ville">Ville :</label>
             <input type="text" name="query_ville" id="query_ville" placeholder="Entrez une ville">
