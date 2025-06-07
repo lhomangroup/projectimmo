@@ -1,11 +1,11 @@
 modules = ["python-3.12"]
-run = "pip install -r requierement.txt"
+run = "pip install -r requirements.txt"
 
 [nix]
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "pip install -r requierement.txt"]
+run = ["sh", "-c", "pip install -r requirements.txt"]
 
 [workflows]
 runButton = "Django Server"
