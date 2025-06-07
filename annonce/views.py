@@ -155,6 +155,9 @@ def logged_annonce(request):
         pays = request.POST.get('pays')
 
         if annonceForm.is_valid():
+            # Import nécessaire pour AdressAnnonce
+            from annonce.models import AdressAnnonce, Condition
+            
             # Créer l'adresse
             myAdress = AdressAnnonce.objects.create(
                 rue=rue or '',
@@ -175,6 +178,9 @@ def logged_annonce(request):
             Condition.objects.create(annonce=annonce)
             
             return redirect(reverse('dashboard-annonce', kwargs={'pk': annonce.id}))
+        else:
+            # Afficher les erreurs du formulaire pour debug
+            print("Erreurs du formulaire:", annonceForm.errors)
     else:
         annonceForm = AnnonceForm()
 
