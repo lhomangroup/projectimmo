@@ -1,0 +1,63 @@
+{% extends "annonce/dashboard/dashboard.html" %}
+
+ {% block content %}
+    <div class="col-md-5">
+      {% load crispy_forms_tags %}
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{form|crispy}}
+            <div class="container">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Ajoutez votre adresse</h4>
+                </div>
+                <div class="panel-body" >
+                  <input id="autocomplete" name="adressComplete" placeholder="Entrez votre adresse" type="text" class="form-control">
+                <small id="emailHelp" class="form-text text-muted">Votre adresse actuelle : {{ address.rue }} {{address.voie}}, {{address.ville}} - {{address.zipCode}}</small>
+                  <div id="address">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="control-label">Rue</label>
+                        <input class="form-control" id="street_number" name="rue" disabled="true">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="control-label">Voie</label>
+                        <input class="form-control" id="route" name="voie" disabled="true">
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="control-label">Ville</label>
+                        <input class="form-control field" id="locality" disabled="true" name="ville">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="control-label">Region</label>
+                        <input class="form-control" id="administrative_area_level_1" disabled="true" name="region">
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="control-label">Code Postal</label>
+                        <input class="form-control" id="postal_code" disabled="true" name="zip">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="control-label">Pays</label>
+                        <input class="form-control" id="country" disabled="true" name="pays">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+{% load static %}
+
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1lHVWM1UP-2-F2RPwgBCcRKjYjXAqm5A&libraries=places&callback=initAutocomplete" async defer></script>
+            <script src="{% static 'js/autocomplete.js' %}"></script>
+          <input type="submit" value="Modifier">
+        </form>
+    </div>
+{% endblock %}
+
+{% block title %}
+  <h2>Vos coordonnées</h2>
+{% endblock %}
