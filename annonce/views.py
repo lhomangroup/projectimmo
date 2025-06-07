@@ -497,7 +497,11 @@ def user_view_dashboard(request, pk):
     region = request.POST.get('region')
     zip = request.POST.get('zip')
     pays = request.POST.get('pays')
-    myAdress = Address.objects.get(account=user)
+    try:
+        myAdress = Address.objects.get(account=user)
+    except Address.DoesNotExist:
+        # Créer une adresse vide si elle n'existe pas
+        myAdress = Address.objects.create(account=user)
     address = request.POST.get('adressComplete')
 
     if request.method == 'POST':
@@ -522,7 +526,7 @@ def user_view_dashboard(request, pk):
 
     context = {'form': form, 'obj': myObject, 'address': myAdress}
 
-    return render(request,'annonce/dashboard/userDashboard.html',context)
+    return render(request, 'annonce/dashboard/userDashboard.html', context)
 
 def verification_view(request, pk):
     myObject = Annonce.objects.get(id=pk)
