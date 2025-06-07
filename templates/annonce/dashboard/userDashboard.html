@@ -1,192 +1,84 @@
+{% extends "annonce/dashboard/dashboard.html" %}
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Coordonnées - {{ obj.titre_logement }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
-        }
-        .form-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-        }
-        .form-section h2 {
-            margin-top: 0;
-            color: #333;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        .panel {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        .panel-heading {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border-bottom: 1px solid #ddd;
-        }
-        .panel-title {
-            margin: 0;
-            font-size: 16px;
-        }
-        .panel-body {
-            padding: 15px;
-        }
-        .row {
-            display: flex;
-            margin: -10px;
-        }
-        .col-md-6 {
-            flex: 1;
-            padding: 10px;
-        }
-        .btn {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-        .btn-secondary:hover {
-            background-color: #545b62;
-        }
-        .form-text {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        .control-label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Mes Coordonnées - {{ obj.titre_logement }}</h1>
-            <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Retour au tableau de bord</a>
-        </div>
-
-        <form method="post">
+{% block content %}
+    <div class="col-md-5">
+      {% load crispy_forms_tags %}
+        <form action="" method="POST">
             {% csrf_token %}
-            
-            <div class="form-section">
-                <h2>Modifier mes informations personnelles</h2>
-                
-                <div class="form-group">
-                    {% load crispy_forms_tags %}
-                    {{ form|crispy }}
+            {{form|crispy}}
+            <div class="container">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Vos coordonnées</h3>
                 </div>
-            </div>
-
-            <div class="form-section">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">Ajoutez votre adresse</h4>
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">Nom</label>
+                        <input class="form-control" id="nom" name="nom">
+                      </div>
                     </div>
-                    <div class="panel-body">
-                        <input id="autocomplete" name="adressComplete" placeholder="Entrez votre adresse" type="text" class="form-control">
-                        <small class="form-text text-muted">Votre adresse actuelle : {{ address.rue }} {{address.voie}}, {{address.ville}} - {{address.zipCode}}</small>
-                        <div id="address">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="control-label">Rue</label>
-                                    <input class="form-control" id="street_number" name="rue" disabled="true">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="control-label">Voie</label>
-                                    <input class="form-control" id="route" name="voie" disabled="true">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="control-label">Ville</label>
-                                    <input class="form-control field" id="locality" disabled="true" name="ville">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="control-label">Region</label>
-                                    <input class="form-control" id="administrative_area_level_1" disabled="true" name="region">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="control-label">Code Postal</label>
-                                    <input class="form-control" id="postal_code" disabled="true" name="zip">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="control-label">Pays</label>
-                                    <input class="form-control" id="country" disabled="true" name="pays">
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">Prénom</label>
+                        <input class="form-control" id="prenom" name="prenom">
+                      </div>
                     </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label class="control-label">Email</label>
+                        <input class="form-control" id="email" name="email" type="email">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">Téléphone</label>
+                        <input class="form-control" id="telephone" name="telephone">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">Adresse</label>
+                        <input class="form-control" id="adresse" name="adresse">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">Ville</label>
+                        <input class="form-control" id="ville" name="ville">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="control-label">Code postal</label>
+                        <input class="form-control" id="code_postal" name="code_postal">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="control-label">Pays</label>
+                      <input class="form-control" id="country" disabled="true" name="pays">
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
-
-            <div style="margin-top: 30px;">
-                <button type="submit" class="btn">Modifier</button>
-                <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Annuler</a>
-            </div>
+            {% load static %}
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1lHVWM1UP-2-F2RPwgBCcRKjYjXAqm5A&libraries=places&callback=initAutocomplete" async defer></script>
+            <script src="{% static 'js/autocomplete.js' %}"></script>
+            <input type="submit" value="Modifier">
         </form>
     </div>
+{% endblock %}
 
-    {% load static %}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1lHVWM1UP-2-F2RPwgBCcRKjYjXAqm5A&libraries=places&callback=initAutocomplete" async defer></script>
-    <script src="{% static 'js/autocomplete.js' %}"></script>
-</body>
-</html>
+{% block title %}
+  <h2>Vos coordonnées</h2>
+{% endblock %}
