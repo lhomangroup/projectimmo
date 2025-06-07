@@ -1,8 +1,10 @@
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django import forms
 from django.forms import ModelForm
 from client.models import Client
+
+User = get_user_model()
 
 TYPE_UTILISATEUR_CHOICES = [
     ('locataire', 'Locataire'),
