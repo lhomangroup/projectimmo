@@ -257,41 +257,56 @@ def dashboard_list(request):
 
 @login_required
 def description_view(request, pk):
-    form = DescriptionForm()
     myObject = Annonce.objects.get(id=pk)
     requete = request.user
-    rue = request.POST.get('rue')
-    voie = request.POST.get('voie')
-    ville = request.POST.get('ville')
-    region = request.POST.get('region')
-    zip = request.POST.get('zip')
-    pays = request.POST.get('pays')
-    address = request.POST.get('adressComplete')
     myAdress = myObject.address
+    
     if request.method == 'POST':
         form = DescriptionForm(request.POST, instance=myObject)
+        
+        # Récupérer les données d'adresse
+        rue = request.POST.get('rue', '')
+        voie = request.POST.get('voie', '')
+        ville = request.POST.get('ville', '')
+        region = request.POST.get('region', '')
+        zip = request.POST.get('zip', '')
+        pays = request.POST.get('pays', 'France')
+        address = request.POST.get('adressComplete')
+        
         if form.is_valid():
-            if address == '':
-                form.save()
-                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
-            else:
-                myAdress.rue = rue
-                myAdress.voie = voie
-                myAdress.ville = ville
-                myAdress.region = region
-                myAdress.zipCode = zip
-                myAdress.pays = pays
-                myAdress.save()
-                user = form.save()
-                form.save()
-                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
-    if request.method =='POST':
-        form = DescriptionForm(request.POST, instance=myObject)
-        if form.is_valid():
+            # Sauvegarder l'annonce
             form.save()
-            return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+            
+            # Mettre à jour l'adresse si les champs d'adresse sont fournis
+            if address:
+                if myAdress:
+                    myAdress.rue = rue
+                    myAdress.voie = voie
+                    myAdress.ville = ville
+                    myAdress.region = region
+                    myAdress.zipCode = zip
+                    myAdress.pays = pays
+                    myAdress.save()
+                else:
+                    # Créer une nouvelle adresse si elle n'existe pas
+                    from annonce.models import AdressAnnonce
+                    myAdress = AdressAnnonce.objects.create(
+                        rue=rue,
+                        voie=voie,
+                        ville=ville,
+                        region=region,
+                        zipCode=zip,
+                        pays=pays
+                    )
+                    myObject.address = myAdress
+                    myObject.save()
+            
+            return redirect(request.META.get('HTTP_REFERER', '/annonce/dashboard/list/'))
+        else:
+            print("Erreurs du formulaire:", form.errors)
     else:
         form = DescriptionForm(instance=myObject)
+    
     context = {'form': form, 'obj': myObject, 'requete': requete, 'address': myAdress}
     return render(request,'annonce/dashboard/description.html',context)
 

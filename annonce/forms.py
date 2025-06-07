@@ -42,7 +42,7 @@ class CreateUserForm(UserCreationForm):
 class DescriptionForm(ModelForm):
     class Meta:
         model = Annonce
-        fields = ['titre_logement','description','categorie_logement','nombre_personne', 'pieces_couchage']
+        fields = ['titre_logement','description','categorie_logement','nombre_personne', 'pieces_couchage', 'hebergement_choice', 'type_location_choices']
         def __init__(self, *args, **kwargs):
             super(DescriptionForm, self).__init__(*args,**kwargs)
             self.helper = FormHelper()
