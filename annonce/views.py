@@ -238,9 +238,9 @@ def dashboard_view(request, pk):
 @login_required
 def gerer_annonce(request):
     requete = request.user
-    myObject = Annonce.objects.filter(user=request.user)
-    context = {'obj': myObject}
-    return render(request, 'annonce/dashboard/gerer-annonce.html', context)
+    annonces = Annonce.objects.filter(user=request.user).order_by('-id')
+    context = {'annonces': annonces}
+    return render(request, 'annonce/dashboard/dashboard_list.html', context)
 
 @login_required
 def dashboard_list(request):
