@@ -5,9 +5,9 @@ from . import views
 from produit import views as produit_views
 from .views import VerificationView
 urlpatterns = [
-    path('creer-annonce/', views.create_annonce, name='creer-annonce'),
-    path('register/', views.inscriptionPage, name='register'),
-    path('login-annonce/', views.login_user, name='login-annonce'),
+    path('creer-annonce', views.create_annonce, name='creer-annonce'),
+    path('register', views.inscriptionPage, name='register'),
+    path('login-annonce', views.login_user, name='login-annonce'),
     path('logout-annonce', views.logout_annonce, name='logout-annonce'),
     path('logged-annonce', views.logged_annonce, name='logged-annonce'),
     path('annonce-profil', views.profile_annonce, name='annonce-profil'),
