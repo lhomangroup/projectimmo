@@ -37,6 +37,7 @@ from annonceMain.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', produit_views.home, name='home'),
     path('compte/inscription/', views.inscriptionPage, name='inscription'),
     path('compte/acces/', views.accesPage, name='acces'),
     path('compte/quitter/', views.logoutUser, name='quitter'),
@@ -47,6 +48,8 @@ urlpatterns = [
     path('', include('produit.urls')),
     path('', include('conciergerie.urls')),
     path('annonce/', include('annonce.urls')),
+    path('creer-annonce/', include('annonce.urls')),
+    path('login-annonce/', include('annonce.urls')),
     path('client', include('client.urls')),
     path('commande', include('commande.urls')),
     path('compte/', include('compte.urls')),
