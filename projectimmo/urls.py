@@ -41,6 +41,7 @@ urlpatterns = [
     path('compte/acces/', views.accesPage, name='acces'),
     path('compte/quitter/', views.logoutUser, name='quitter'),
     path('login-annonce/', include('annonce.urls')),
+    path('annonce/', include('annonce.urls')),
     path('', include('annonceMain.urls')),
    # path('', include('streaming_app.urls')),
     path('user/', views.userPage, name='user-page'),
