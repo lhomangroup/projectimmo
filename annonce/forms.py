@@ -165,3 +165,23 @@ class VerifImage(ModelForm):
         super(VerifImage, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'POST'
+
+class ImageForm(ModelForm):
+    class Meta:
+        model = ImageLogement
+        fields = ['images']
+    
+    def __init__(self, *args, **kwargs):
+        super(ImageForm, self).__init__(*args,**kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'POST'
+
+class DureeLOcationForm(ModelForm):
+    class Meta:
+        model = Annonce
+        fields = ['dureeLocationMini', 'dureeLocationMaxi']
+    
+    def __init__(self, *args, **kwargs):
+        super(DureeLOcationForm, self).__init__(*args,**kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'POST'

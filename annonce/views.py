@@ -22,7 +22,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from .utils import token_generator
 
 from .decorators import unauthenticated_user
-from .forms import AnnonceForm, LoggedForm, CreateUserForm, DescriptionForm, FormLoyer, FormEquipement, CategorieServicesForm, ServiceAnnonceForm, ImageForm, FormCalendrier, FormCondition, DureeLOcationForm, VerifImage, ServicesForm, FormDiagnostic, UserModif
+from .forms import AnnonceForm, LoggedForm, CreateUserForm, DescriptionForm, FormLoyer, FormEquipement, CategorieServicesForm, FormCalendrier, FormCondition, VerifImage, ServicesForm, FormDiagnostic, UserModif
 from account.models import Address
 from django.contrib.auth.decorators import login_required
 # Create your views here.
