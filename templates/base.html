@@ -7,10 +7,26 @@
     {% load static %}
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="/">Accueil</a>
-            <a href="/produit/">Produits</a>
+    <header style="background-color: #f8f9fa; padding: 10px 20px; border-bottom: 1px solid #dee2e6;">
+        <nav style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <a href="/" style="margin-right: 20px; text-decoration: none; color: #007bff;">🏠 Accueil</a>
+                <a href="/produit/" style="margin-right: 20px; text-decoration: none; color: #007bff;">📦 Produits</a>
+                {% if user.is_authenticated %}
+                <a href="/annonce/dashboard/" style="margin-right: 20px; text-decoration: none; color: #007bff;">📊 Dashboard</a>
+                {% endif %}
+            </div>
+            {% if user.is_authenticated %}
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="color: #495057;">{{ user.first_name|default:user.email }}</span>
+                <a href="{% url 'logout-annonce' %}" style="background-color: #dc3545; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 14px;">🚪 Déconnexion</a>
+            </div>
+            {% else %}
+            <div>
+                <a href="{% url 'login-annonce' %}" style="background-color: #007bff; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; margin-right: 10px;">🔑 Connexion</a>
+                <a href="/annonce/register/" style="background-color: #28a745; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none;">📝 Inscription</a>
+            </div>
+            {% endif %}
         </nav>
     </header>
 

@@ -51,9 +51,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenue sur ProjectImmo</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>Bienvenue sur ProjectImmo</h1>
+            {% if user.is_authenticated %}
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="color: #495057;">Bonjour, {{ user.first_name|default:user.email }}</span>
+                <a href="{% url 'logout-annonce' %}" style="background-color: #dc3545; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 14px;">🚪 Se déconnecter</a>
+            </div>
+            {% endif %}
+        </div>
+        
         <p>Votre plateforme immobilière pour locataires, propriétaires et partenaires</p>
         
+        {% if not user.is_authenticated %}
         <div class="buttons">
             <a href="/annonce/register/" class="btn" style="background-color: #28a745; font-size: 20px; padding: 20px 40px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(40,167,69,0.3);">📝 S'INSCRIRE GRATUITEMENT</a>
             <a href="{% url 'login-annonce' %}" class="btn btn-secondary" style="font-size: 18px; padding: 15px 30px;">🔑 Se connecter</a>
@@ -63,6 +73,12 @@
                 </p>
             </div>
         </div>
+        {% else %}
+        <div class="buttons" style="text-align: center;">
+            <a href="/annonce/dashboard/" class="btn" style="background-color: #007bff; font-size: 18px; padding: 15px 30px; margin: 10px;">📊 Mon Dashboard</a>
+            <a href="/annonce/creer-annonce/" class="btn" style="background-color: #28a745; font-size: 18px; padding: 15px 30px; margin: 10px;">➕ Créer une annonce</a>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>
