@@ -1,4 +1,5 @@
 
+<old_str>
 {% extends "annonce/dashboard/dashboard.html" %}
 
 {% block content %}
@@ -183,3 +184,149 @@ if (typeof google !== 'undefined') {
 }
 </script>
 {% endblock %}
+</old_str>
+<new_str>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes coordonnées - {{ obj.titre_logement }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .form-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mes coordonnées - {{ obj.titre_logement }}</h1>
+            <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Retour au tableau de bord</a>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <h2>Informations personnelles</h2>
+                {% load crispy_forms_tags %}
+                {{ form|crispy }}
+            </div>
+
+            <div class="form-section">
+                <h2>Adresse</h2>
+                <div class="form-group">
+                    <label for="autocomplete">Entrez votre adresse complète</label>
+                    <input id="autocomplete" name="adressComplete" placeholder="Entrez votre adresse" type="text" value="{% if address %}{{ address.rue }} {{ address.voie }}, {{ address.ville }} {{ address.zipCode }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="rue">Rue</label>
+                    <input type="text" name="rue" id="rue" value="{% if address %}{{ address.rue }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="voie">Voie</label>
+                    <input type="text" name="voie" id="voie" value="{% if address %}{{ address.voie }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ville">Ville</label>
+                    <input type="text" name="ville" id="ville" value="{% if address %}{{ address.ville }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="region">Région</label>
+                    <input type="text" name="region" id="region" value="{% if address %}{{ address.region }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="zip">Code postal</label>
+                    <input type="text" name="zip" id="zip" value="{% if address %}{{ address.zipCode }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="pays">Pays</label>
+                    <input type="text" name="pays" id="pays" value="{% if address %}{{ address.pays }}{% else %}France{% endif %}">
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button type="submit" class="btn">Sauvegarder</button>
+                <a href="{% url 'dashboard-annonce' obj.id %}" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+</new_str>

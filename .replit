@@ -7,6 +7,7 @@ channel = "stable-24_05"
 
 [deployment]
 run = ["sh", "-c", "pip install -r requirements.txt && python manage.py migrate && python manage.py runserver 0.0.0.0:5000"]
+deploymentTarget = "cloudrun"
 
 [workflows]
 runButton = "Django Server"
