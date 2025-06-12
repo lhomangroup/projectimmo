@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.baseconv import base64
 from django.views import View
 
-from .models import Annonce
+from .models import Annonce, ImageLogement, AdressAnnonce, Condition, Equipement
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.http import HttpResponse, HttpResponseRedirect
@@ -178,9 +178,6 @@ def logged_annonce(request):
 
         print(f"Form valide: {annonceForm.is_valid()}")
         if annonceForm.is_valid():
-            # Import nécessaire pour AdressAnnonce
-            from annonce.models import AdressAnnonce, Condition, Equipement
-
             print("Création de l'adresse...")
             # Créer l'adresse
             myAdress = AdressAnnonce.objects.create(
