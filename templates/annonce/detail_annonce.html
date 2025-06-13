@@ -260,7 +260,12 @@
             <a href="/conciergerie/" class="btn btn-secondary">← Retour aux annonces</a>
             <a href="/" class="btn">🏠 Accueil</a>
             {% if user.is_authenticated %}
-            <a href="/annonce/dashboard/list/" class="btn">📊 Mon tableau de bord</a>
+                {% if user.typelocataire == 'PART' %}
+                <a href="/soumission/" class="btn" style="background-color: #28a745;">📋 Soumettre mon Dossier</a>
+                {% endif %}
+                <a href="/annonce/dashboard/list/" class="btn">📊 Mon tableau de bord</a>
+            {% else %}
+                <a href="/annonce/login-annonce/" class="btn">🔐 Se connecter pour soumettre un dossier</a>
             {% endif %}
         </div>
     </div>

@@ -168,9 +168,15 @@
     </div>
     {% endif %}
 
+    {% if user.is_authenticated and user.typelocataire == 'PART' %}
     <div style="text-align: center; margin: 40px 0;">
-        <a href="/creer-annonce" class="btn btn-success">Créer votre propre annonce</a>
-        <a href="/login-annonce" class="btn">Se connecter</a>
+        <a href="/soumission/" class="btn" style="background-color: #28a745; color: white; padding: 15px 30px; font-size: 18px; border-radius: 8px; text-decoration: none; display: inline-block;">📋 Soumettre mon Dossier</a>
+    </div>
+    {% elif not user.is_authenticated %}
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="/annonce/login-annonce/" class="btn" style="background-color: #007bff;">🔐 Se connecter pour soumettre un dossier</a>
+    </div>
+    {% endif %}
     </div>
 </body>
 </html>
