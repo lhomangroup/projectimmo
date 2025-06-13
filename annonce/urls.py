@@ -36,8 +36,9 @@ urlpatterns = [
     path('detail/<int:pk>/', views.detail_annonce, name='detail-annonce'),
     path('gerer-annonce/', views.gerer_annonce, name='gerer-annonce'),
     path('detail_annonce/<str:pk>/', views.detail_annonce, name='detail-annonce'),
-    path('selectionner/<str:pk>/', views.selectionner_annonce, name='selectionner-annonce'),
-    path('annuler-selection/<str:pk>/', views.annuler_selection_annonce, name='annuler-selection-annonce'),
+    path('selectionner-annonce/<int:pk>/', views.selectionner_annonce, name='selectionner-annonce'),
+    path('annuler-selection-annonce/<int:pk>/', views.annuler_selection_annonce, name='annuler-selection-annonce'),
+    path('ajouter-au-tableau-de-bord/<int:pk>/', views.ajouter_au_tableau_de_bord, name='ajouter-au-tableau-de-bord'),
 
     # Profile
     path('profile/', views.profile_annonce, name='profile-annonce'),

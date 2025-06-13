@@ -714,6 +714,33 @@ def annuler_selection_annonce(request, pk):
     messages.success(request, 'Sélection annulée. Vous pouvez maintenant choisir une autre annonce.')
     return redirect('dashboard-list')
 
+@login_required
+def ajouter_au_tableau_de_bord(request, pk):
+    """Vue pour qu'un locataire ajoute une annonce à son tableau de bord"""
+    if request.user.typelocataire != 'PART':
+        from django.contrib import messages
+        messages.error(request, 'Seuls les locataires peuvent ajouter des annonces à leur tableau de bord.')
+        return redirect('detail-annonce', pk=pk)
+    
+    annonce = get_object_or_404(Annonce, pk=pk)
+    
+    # Vérifier que l'annonce n'est pas déjà sélectionnée par un autre locataire
+    if annonce.locataire_interesse and annonce.locataire_interesse != request.user:
+        from django.contrib import messages
+        messages.error(request, 'Cette annonce est déjà sélectionnée par un autre locataire.')
+        return redirect('detail-annonce', pk=pk)
+    
+    # Désélectionner toute autre annonce de ce locataire
+    Annonce.objects.filter(locataire_interesse=request.user).update(locataire_interesse=None)
+    
+    # Sélectionner cette annonce
+    annonce.locataire_interesse = request.user
+    annonce.save()
+    
+    from django.contrib import messages
+    messages.success(request, f'L\'annonce "{annonce.titre_logement}" a été ajoutée à votre tableau de bord.')
+    return redirect('dashboard-list')
+
 @unauthenticated_user
 def inscription_simple(request):
     """Vue pour l'inscription simple sans création d'annonce"""
