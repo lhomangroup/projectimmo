@@ -34,14 +34,14 @@ class SoumissionCreateView(CreateView):
     # model = ClientCli
     form_class = ClientForm
     # fields = '__all__'
-    template_name = "client_submission.html"
+    template_name = "soumission/client_submission.html"
 
 
 class SoumissionSigner(CreateView):
     # model = SignerCli
     form_class = SignerForm
     # fields = '__all__'
-    template_name = "signer.html"
+    template_name = "soumission/signer.html"
 
 
 # Imaginary function to handle an uploaded file.
