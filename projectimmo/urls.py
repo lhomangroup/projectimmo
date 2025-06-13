@@ -66,6 +66,7 @@ urlpatterns = [
     path('cancel/', CancelView.as_view(), name='cancel'),
     path('success/', SuccessView.as_view(), name='success'),
     path('webhooks/stripe/', stripe_webhook, name='stripe-webhook'),
+    path('', include('workflow.urls')),
  #   path('reset_password/', auth_views.PasswordResetView.as_view(),name="reset_password"),
   #  path('reset_password_sent/', auth_views.PasswordResetDone.as_view(),name="password_reset_done"),
   #  path('reset/<uidb64>/<token>/', auth_views.PasswordConfirmView.as_view(),name="password_reset_confirm"),
