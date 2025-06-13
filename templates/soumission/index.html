@@ -58,7 +58,7 @@
             {% if user.is_authenticated %}
                 <p>Bienvenue, {{ user.first_name|default:user.email }}</p>
                 <a href="#" class="btn">Mes soumissions</a>
-                <a href="#" class="btn">Nouvelle soumission</a>
+                <a href="{% url 'soumission-add' %}" class="btn">Nouvelle soumission</a>
             {% else %}
                 <p>Vous devez être connecté pour accéder à cette section.</p>
                 <a href="{% url 'acces' %}" class="btn">Se connecter</a>
