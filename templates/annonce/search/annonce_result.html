@@ -86,9 +86,18 @@
     </style>
 </head>
 <body>
+    {% if user.is_authenticated %}
+    <div style="background: #e7f3ff; padding: 10px; margin-bottom: 20px; border-radius: 5px; text-align: center;">
+        <p><strong>Bienvenue {{ user.first_name }} {{ user.last_name }}</strong> - Vous êtes connecté en tant que locataire</p>
+    </div>
+    {% endif %}
+    
     <div class="back-link">
         <a href="/" class="btn">← Retour à l'accueil</a>
         <a href="/annonce/searchPage/" class="btn">Nouvelle recherche</a>
+        {% if user.is_authenticated %}
+        <a href="/annonce/logout-annonce/" class="btn" style="background-color: #dc3545;">Se déconnecter</a>
+        {% endif %}
     </div>
 
     <div class="annonce-header">
