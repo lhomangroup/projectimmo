@@ -65,7 +65,7 @@
         
         {% if not user.is_authenticated %}
         <div class="buttons">
-            <a href="/annonce/register/" class="btn" style="background-color: #28a745; font-size: 20px; padding: 20px 40px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(40,167,69,0.3);">📝 S'INSCRIRE GRATUITEMENT</a>
+            <a href="{% url 'inscription' %}" class="btn" style="background-color: #28a745; font-size: 20px; padding: 20px 40px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(40,167,69,0.3);">📝 S'INSCRIRE GRATUITEMENT</a>
             <a href="{% url 'login-annonce' %}" class="btn btn-secondary" style="font-size: 18px; padding: 15px 30px;">🔑 Se connecter</a>
             <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">
                 <p style="margin: 0; color: #495057; font-size: 14px;">
@@ -75,8 +75,8 @@
         </div>
         {% else %}
         <div class="buttons" style="text-align: center;">
-            <a href="/annonce/dashboard/" class="btn" style="background-color: #007bff; font-size: 18px; padding: 15px 30px; margin: 10px;">📊 Mon Dashboard</a>
-            <a href="/annonce/creer-annonce/" class="btn" style="background-color: #28a745; font-size: 18px; padding: 15px 30px; margin: 10px;">➕ S'inscrire & Créer une annonce</a>
+            <a href="{% url 'dashboard-list' %}" class="btn" style="background-color: #007bff; font-size: 18px; padding: 15px 30px; margin: 10px;">📊 Mon Dashboard</a>
+            <a href="{% url 'creer-annonce' %}" class="btn" style="background-color: #28a745; font-size: 18px; padding: 15px 30px; margin: 10px;">➕ S'inscrire & Créer une annonce</a>
         </div>
         {% endif %}
     </div>

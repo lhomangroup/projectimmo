@@ -94,8 +94,8 @@
     </div>
 
     <div class="actions">
-        <a href="/creer-annonce" class="btn btn-primary">S'inscrire & Créer une annonce</a>
-        <a href="/login-annonce" class="btn btn-success">Se connecter</a>
+        <a href="{% url 'creer-annonce' %}" class="btn btn-primary">S'inscrire & Créer une annonce</a>
+        <a href="{% url 'login-annonce' %}" class="btn btn-success">Se connecter</a>
     </div>
 
     <form class="search-form" method="get" action="/annonce/searchPage/">
