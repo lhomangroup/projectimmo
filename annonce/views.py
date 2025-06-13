@@ -312,7 +312,7 @@ def dashboard_list(request):
         for annonce in annonces:
             print(f"Annonce ID: {annonce.id}, Titre: {annonce.titre_logement}")
 
-    print(f"Nombre d'annonces trouvées: {len(context.get('annonces', [annonce_selectionnee] if 'annonce_selectionnee' in locals() else [])}")
+    print(f"Nombre d'annonces trouvées: {len(context.get('annonces', [annonce_selectionnee] if 'annonce_selectionnee' in locals() else []))}")
     return render(request, template, context)
 
 @login_required
