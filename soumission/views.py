@@ -8,6 +8,11 @@ from .models import *
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from soumission.models import checkboxcourses
+from django.http import HttpResponse
+
+def soumission_home(request):
+    """Vue pour la page d'accueil des soumissions"""
+    return render(request, 'soumission/index.html')
 
 
 def savevalues(request):
