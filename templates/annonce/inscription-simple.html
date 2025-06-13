@@ -124,6 +124,11 @@
             </div>
 
             <div class="form-group">
+                <label for="{{ userForm.type_utilisateur.id_for_label }}">Type d'utilisateur:</label>
+                {{ userForm.type_utilisateur }}
+            </div>
+
+            <div class="form-group" id="typelocataire-group">
                 <label for="{{ userForm.typelocataire.id_for_label }}">Type de locataire:</label>
                 {{ userForm.typelocataire }}
             </div>
@@ -146,5 +151,26 @@
             <p>Ou <a href="{% url 'annonceHome' %}">retourner à l'accueil</a></p>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeUtilisateurSelect = document.getElementById('id_type_utilisateur');
+            const typelocataireGroup = document.getElementById('typelocataire-group');
+            
+            function toggleTypeLocataireField() {
+                if (typeUtilisateurSelect.value === 'locataire') {
+                    typelocataireGroup.style.display = 'block';
+                } else {
+                    typelocataireGroup.style.display = 'none';
+                }
+            }
+            
+            // Masquer/afficher au chargement de la page
+            toggleTypeLocataireField();
+            
+            // Masquer/afficher lors du changement de sélection
+            typeUtilisateurSelect.addEventListener('change', toggleTypeLocataireField);
+        });
+    </script>
 </body>
 </html>

@@ -31,10 +31,22 @@ class LoggedForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = 'POST'
 
+TYPE_UTILISATEUR_CHOICES = [
+    ('locataire', 'Locataire'),
+    ('proprietaire', 'Propriétaire'),
+    ('partenaire', 'Partenaire'),
+]
+
 class CreateUserForm(UserCreationForm):
+    type_utilisateur = forms.ChoiceField(
+        choices=TYPE_UTILISATEUR_CHOICES,
+        label="Type d'utilisateur",
+        widget=forms.Select(attrs={'id': 'id_type_utilisateur'})
+    )
+    
     class Meta(UserCreationForm.Meta):
         model = Account
-        fields = ('email','first_name','last_name','telephone','typelocataire')
+        fields = ('email','first_name','last_name','telephone','type_utilisateur','typelocataire')
     
     def __init__(self, *args, **kwargs):
         super(CreateUserForm, self).__init__(*args, **kwargs)

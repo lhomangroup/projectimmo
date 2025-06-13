@@ -45,7 +45,7 @@ def create_annonce(request):
     if request.method == 'POST':
         userForm = CreateUserForm(request.POST)
         annonceForm = AnnonceForm(request.POST)
-        
+
         rue = request.POST.get('rue', '')
         voie = request.POST.get('voie', '')
         ville = request.POST.get('ville', '')
@@ -55,11 +55,11 @@ def create_annonce(request):
 
         print(f"Formulaire utilisateur valide: {userForm.is_valid()}")
         print(f"Formulaire annonce valide: {annonceForm.is_valid()}")
-        
+
         if not userForm.is_valid():
             print("Erreurs formulaire utilisateur:", userForm.errors)
             messages.error(request, f"Erreur dans les informations utilisateur: {userForm.errors}")
-            
+
         if not annonceForm.is_valid():
             print("Erreurs formulaire annonce:", annonceForm.errors)
             messages.error(request, f"Erreur dans les informations de l'annonce: {annonceForm.errors}")
@@ -114,7 +114,7 @@ def create_annonce(request):
                         'token': token_generator.make_token(user)
                     })
                     activate_url = 'http://' + domain + link
-                    
+
                     email_subject = 'Activez votre compte'
                     email_body = f'Bonjour {user.first_name},\n\nCliquez sur ce lien pour activer votre compte:\n{activate_url}'
 
@@ -126,19 +126,19 @@ def create_annonce(request):
                     )
                     email.send(fail_silently=False)
                     print("Email envoyé avec succès")
-                    
+
                     messages.success(request, f'Annonce créée avec succès ! Un email de confirmation a été envoyé à {user.email}')
                     return redirect('creer-annonce')
-                    
+
                 except Exception as e:
                     print(f"Erreur envoi email: {e}")
                     messages.warning(request, f'Annonce créée avec succès ! Cependant, l\'email de confirmation n\'a pas pu être envoyé.')
                     return redirect('creer-annonce')
-                    
+
             except Exception as e:
                 print(f"Erreur lors de la création: {e}")
                 messages.error(request, f'Erreur lors de la création de l\'annonce: {e}')
-        
+
     else:
         userForm = CreateUserForm()
         annonceForm = AnnonceForm()
@@ -183,7 +183,7 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
-            
+
             # Rediriger selon le type d'utilisateur
             if user.typelocataire == 'PART':  # Particulier (locataire)
                 return redirect('dashboard-list')  # Dashboard des annonces existantes
@@ -290,7 +290,7 @@ def dashboard_list(request):
     if request.user.typelocataire == 'PART':  # Particulier (locataire)
         # Vérifier s'il y a une annonce sélectionnée pour ce locataire
         annonce_selectionnee = Annonce.objects.filter(locataire_interesse=request.user).first()
-        
+
         if annonce_selectionnee:
             # Afficher l'annonce sélectionnée avec option d'annulation
             template = 'annonce/dashboard/dashboard_locataire.html'
@@ -308,7 +308,7 @@ def dashboard_list(request):
         annonces = Annonce.objects.filter(user=request.user).order_by('-id')
         template = 'annonce/dashboard/dashboard_list.html'
         context = {'annonces': annonces, 'is_locataire': False}
-        
+
         for annonce in annonces:
             print(f"Annonce ID: {annonce.id}, Titre: {annonce.titre_logement}")
 
@@ -544,7 +544,7 @@ def diagnsotic_view(request, pk):
 def user_view_dashboard(request, pk):
     myObject = Annonce.objects.get(id=pk)
     user = request.user
-    
+
     try:
         myAdress = Address.objects.get(account=user)
     except Address.DoesNotExist:
@@ -564,7 +564,7 @@ def user_view_dashboard(request, pk):
         if form.is_valid():
             # Sauvegarder les informations utilisateur
             form.save()
-            
+
             # Mettre à jour l'adresse si des données sont fournies
             if any([rue, voie, ville, region, zip_code, pays]):
                 myAdress.rue = rue
@@ -574,7 +574,7 @@ def user_view_dashboard(request, pk):
                 myAdress.zipCode = zip_code
                 myAdress.pays = pays
                 myAdress.save()
-            
+
             return redirect('dashboard-annonce', pk=myObject.id)
     else:
         form = UserModif(instance=user)
@@ -667,7 +667,7 @@ def detail_annonce(request, pk):
     """Vue pour afficher les détails d'une annonce publique"""
     annonce = get_object_or_404(Annonce, pk=pk)
     images = ImageLogement.objects.filter(annonce=annonce)
-    
+
     context = {
         'annonce': annonce,
         'images': images,
@@ -680,22 +680,22 @@ def selectionner_annonce(request, pk):
     """Vue pour qu'un locataire sélectionne une annonce pour soumission de dossier"""
     if request.user.typelocataire != 'PART':
         return redirect('dashboard-list')
-    
+
     annonce = get_object_or_404(Annonce, pk=pk)
-    
+
     # Vérifier que l'annonce n'est pas déjà sélectionnée par un autre locataire
     if annonce.locataire_interesse and annonce.locataire_interesse != request.user:
         from django.contrib import messages
         messages.error(request, 'Cette annonce est déjà sélectionnée par un autre locataire.')
         return redirect('dashboard-list')
-    
+
     # Désélectionner toute autre annonce de ce locataire
     Annonce.objects.filter(locataire_interesse=request.user).update(locataire_interesse=None)
-    
+
     # Sélectionner cette annonce
     annonce.locataire_interesse = request.user
     annonce.save()
-    
+
     from django.contrib import messages
     messages.success(request, f'Annonce "{annonce.titre_logement}" sélectionnée. Vous pouvez maintenant soumettre votre dossier.')
     return redirect('dashboard-list')
@@ -705,11 +705,11 @@ def annuler_selection_annonce(request, pk):
     """Vue pour qu'un locataire annule la sélection d'une annonce"""
     if request.user.typelocataire != 'PART':
         return redirect('dashboard-list')
-    
+
     annonce = get_object_or_404(Annonce, pk=pk, locataire_interesse=request.user)
     annonce.locataire_interesse = None
     annonce.save()
-    
+
     from django.contrib import messages
     messages.success(request, 'Sélection annulée. Vous pouvez maintenant choisir une autre annonce.')
     return redirect('dashboard-list')
@@ -721,22 +721,22 @@ def ajouter_au_tableau_de_bord(request, pk):
         from django.contrib import messages
         messages.error(request, 'Seuls les locataires peuvent ajouter des annonces à leur tableau de bord.')
         return redirect('detail-annonce', pk=pk)
-    
+
     annonce = get_object_or_404(Annonce, pk=pk)
-    
+
     # Vérifier que l'annonce n'est pas déjà sélectionnée par un autre locataire
     if annonce.locataire_interesse and annonce.locataire_interesse != request.user:
         from django.contrib import messages
         messages.error(request, 'Cette annonce est déjà sélectionnée par un autre locataire.')
         return redirect('detail-annonce', pk=pk)
-    
+
     # Désélectionner toute autre annonce de ce locataire
     Annonce.objects.filter(locataire_interesse=request.user).update(locataire_interesse=None)
-    
+
     # Sélectionner cette annonce
     annonce.locataire_interesse = request.user
     annonce.save()
-    
+
     from django.contrib import messages
     messages.success(request, f'L\'annonce "{annonce.titre_logement}" a été ajoutée à votre tableau de bord.')
     return redirect('dashboard-list')
@@ -748,24 +748,19 @@ def inscription_simple(request):
 
     if request.method == 'POST':
         userForm = CreateUserForm(request.POST)
-        
         if userForm.is_valid():
-            try:
-                # Créer l'utilisateur
-                user = userForm.save()
-                user.is_active = True
-                user.save()
-                
-                # Créer une adresse vide pour l'utilisateur
-                Address.objects.create(account=user)
-                
-                messages.success(request, f'Compte créé avec succès pour {user.email}. Vous pouvez maintenant vous connecter.')
-                return redirect('login-annonce')
-                
-            except Exception as e:
-                messages.error(request, f'Erreur lors de la création du compte: {e}')
-        else:
-            messages.error(request, f'Erreur dans les informations: {userForm.errors}')
+            user = userForm.save(commit=False)
+            # Gérer le type d'utilisateur
+            type_utilisateur = userForm.cleaned_data.get('type_utilisateur')
+            if type_utilisateur == 'proprietaire':
+                user.typelocataire = 'PROP'
+            elif type_utilisateur == 'partenaire':
+                user.typelocataire = 'PART'
+            # Pour les locataires, garder la valeur du champ typelocataire
+            user.save()
+            username = userForm.cleaned_data.get('email')
+            messages.success(request, f'Compte créé pour {username}!')
+            return redirect('login-annonce')
     else:
         userForm = CreateUserForm()
 
