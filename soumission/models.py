@@ -2,6 +2,9 @@ from django.db import models
 from django.utils.html import format_html
 from django_countries.fields import CountryField
 from multiselectfield import MultiSelectField
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+import re
 
 
 class PlanningPla(models.Model):
@@ -71,10 +74,17 @@ class ClientCli(models.Model):
         max_length=100, blank=False, null=True, verbose_name='Prénom')
     cli_situation = models.CharField(
         max_length=100, blank=False, null=True, verbose_name='Situation matrimoniale', choices=SITUATION)
+    phone_regex = RegexValidator(
+        regex=r'^(\+33|0)[1-9](\d{8})$',
+        message="Le numéro de téléphone doit être au format français: +33123456789 ou 0123456789"
+    )
     cli_contact = models.CharField(
-        max_length=100, blank=False, null=True, verbose_name='Contact')
+        validators=[phone_regex], max_length=20, blank=False, null=True, 
+        verbose_name='Numéro de téléphone',
+        help_text='Format: +33123456789 ou 0123456789')
     cli_email = models.EmailField(
-        max_length=100, blank=False, null=True, verbose_name='Email')
+        max_length=100, blank=False, null=True, verbose_name='Adresse email',
+        help_text='Format: exemple@domaine.com')
     cli_noumber_of_pesons = models.IntegerField(
         verbose_name='Nombre de personne dans le foyer', blank=True, null=True)
     cli_adresse_professionnelle = models.CharField(
