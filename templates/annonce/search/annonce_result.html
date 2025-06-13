@@ -167,7 +167,7 @@
     </div>
     {% endif %}
 
-    
+
     <a href="/annonce/detail_annonce/{{ ann.id }}" class="btn btn-primary">Voir détails</a>
             {% if user.is_authenticated and user.typelocataire == 'PART' %}
             <a href="/annonce/selectionner/{{ ann.id }}/" class="btn" style="background-color: #28a745; margin-left: 10px;" onclick="return confirm('Sélectionner cette annonce pour soumission de dossier ?')">
@@ -187,4 +187,3 @@
     </div>
 </body>
 </html>
-```The code modification involves adding buttons to select rental listings and adjusting authentication-related conditional rendering.
