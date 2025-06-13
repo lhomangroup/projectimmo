@@ -34,7 +34,7 @@ urlpatterns = [
 
     # Annonces publiques
     path('detail/<int:pk>/', views.detail_annonce, name='detail-annonce'),
-    path('gerer/', views.gerer_annonce, name='gerer-annonce'),
+    path('gerer-annonce/', views.gerer_annonce, name='gerer-annonce'),
 
     # Profile
     path('profile/', views.profile_annonce, name='profile-annonce'),
