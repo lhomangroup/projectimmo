@@ -80,12 +80,27 @@ def workflow(request):
                 '''.format(data['f_name'], data['s_name'], data['id'], data['my_file_avis'], data['my_file_quittance'],
                            data['my_file_paye'], data['mail'])
             try:
-                send_mail(data['f_name'], message, '', [mail])
+                # Configuration de l'email avec un expéditeur valide
+                from django.core.mail import EmailMessage
+                email_subject = f'Nouveau dossier workflow: {f_name} {s_name}'
+                
+                email = EmailMessage(
+                    email_subject,
+                    message,
+                    'noreply@lhoman.com',  # Expéditeur
+                    ['admin@lhoman.com'],  # Destinataire (admin)
+                    reply_to=[mail],  # Email du client pour répondre
+                )
+                email.send(fail_silently=False)
+                
                 # Message de succès après envoi réussi de l'email
-                messages.success(request, f'Dossier workflow créé avec succès pour {f_name} {s_name}. Un email a été envoyé à {mail}.')
+                messages.success(request, f'Dossier workflow créé avec succès pour {f_name} {s_name}. Un email de notification a été envoyé.')
+                print(f"Email envoyé avec succès pour {f_name} {s_name}")
+                
             except Exception as e:
                 # Message d'erreur si l'envoi d'email échoue
                 messages.error(request, f'Dossier workflow créé pour {f_name} {s_name}, mais l\'envoi d\'email a échoué: {str(e)}')
+                print(f"Erreur envoi email: {str(e)}")
             
             return redirect('workflow')
     context = {'form': form}
