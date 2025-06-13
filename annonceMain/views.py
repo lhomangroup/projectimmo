@@ -22,8 +22,8 @@ from django.http import HttpResponse
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def home(request):
-    """Vue principale - redirige vers la création d'annonce"""
-    return redirect('creer-annonce')
+    """Vue principale - redirige vers annonceHome"""
+    return redirect('annonceHome')
 
 def annonceHome(request):
     query_ville = request.GET.get('query_ville')
