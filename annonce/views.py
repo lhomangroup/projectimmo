@@ -604,3 +604,15 @@ def user_coord_dashboard(request, pk):
 
     context = {'form': form, 'obj': myObject, 'address': myAdress}
     return render(request, 'annonce/dashboard/usercoord.html', context)
+
+def detail_annonce(request, pk):
+    """Vue pour afficher les détails d'une annonce publique"""
+    annonce = get_object_or_404(Annonce, pk=pk)
+    images = ImageLogement.objects.filter(annonce=annonce)
+    
+    context = {
+        'annonce': annonce,
+        'images': images,
+        'address': annonce.address
+    }
+    return render(request, 'annonce/detail_annonce.html', context)
