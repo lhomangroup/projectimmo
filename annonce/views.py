@@ -37,84 +37,114 @@ def user_created(model, request):
 
 @unauthenticated_user
 def create_annonce(request):
+    from django.contrib import messages
 
     form = AnnonceForm()
     userForm = CreateUserForm()
-    rue = request.POST.get('rue')
-    voie = request.POST.get('voie')
-    ville = request.POST.get('ville')
-    region = request.POST.get('region')
-    zip = request.POST.get('zip')
-    pays = request.POST.get('pays')
 
     if request.method == 'POST':
         userForm = CreateUserForm(request.POST)
         annonceForm = AnnonceForm(request.POST)
+        
+        rue = request.POST.get('rue', '')
+        voie = request.POST.get('voie', '')
+        ville = request.POST.get('ville', '')
+        region = request.POST.get('region', '')
+        zip = request.POST.get('zip', '')
+        pays = request.POST.get('pays', 'France')
+
+        print(f"Formulaire utilisateur valide: {userForm.is_valid()}")
+        print(f"Formulaire annonce valide: {annonceForm.is_valid()}")
+        
+        if not userForm.is_valid():
+            print("Erreurs formulaire utilisateur:", userForm.errors)
+            messages.error(request, f"Erreur dans les informations utilisateur: {userForm.errors}")
+            
+        if not annonceForm.is_valid():
+            print("Erreurs formulaire annonce:", annonceForm.errors)
+            messages.error(request, f"Erreur dans les informations de l'annonce: {annonceForm.errors}")
 
         # - validate both forms
         if userForm.is_valid() and annonceForm.is_valid():
-            user = userForm.save()
+            try:
+                # Créer l'utilisateur
+                user = userForm.save()
+                user.is_active = True
+                user.save()
+                print(f"Utilisateur créé: {user.email}")
 
-            # CORRECTION: Activer automatiquement le compte
-            user.is_active = True
-            user.save()
-
-            email = userForm.cleaned_data['email']
-            annonce = annonceForm.save()
-            myAdress = AdressAnnonce.objects.create(rue=rue,voie=voie,ville=ville,region=region,zipCode=zip,pays=pays)
-            myAdress.save()
-            # - associate new objects with newly created user to use in dashboard
-            lastAnnonce = Annonce.objects.latest('id')
-            lastAnnonce.user = user
-            lastAnnonce.address = myAdress
-            lastAnnonce.save()
-
-            # Gérer l'upload d'images multiples
-            uploaded_images = request.FILES.getlist('images')
-            for image in uploaded_images:
-                ImageLogement.objects.create(
-                    annonce=lastAnnonce,
-                    images=image
+                # Créer l'adresse
+                myAdress = AdressAnnonce.objects.create(
+                    rue=rue,
+                    voie=voie,
+                    ville=ville,
+                    region=region,
+                    zipCode=zip,
+                    pays=pays
                 )
+                print(f"Adresse créée: ID {myAdress.id}")
 
-            Condition.objects.create(
-                annonce=annonce,
-            )
-            Address.objects.create(
-                account=user,
-            )
-            userForm.save()
-            # path to view
-                # - getting domain
-                # - relative url to verif
-                # - encode uid for security
-                # - token
-            uidb64=urlsafe_base64_encode(force_bytes(user.id))
+                # Créer l'annonce
+                annonce = annonceForm.save(commit=False)
+                annonce.user = user
+                annonce.address = myAdress
+                annonce.save()
+                print(f"Annonce créée: ID {annonce.id}")
 
-            domain = get_current_site(request).domain
-            link = reverse('activate', kwargs={
-                            'uidb64':uidb64, 'token':token_generator.make_token(user)})
+                # Gérer l'upload d'images multiples
+                uploaded_images = request.FILES.getlist('images')
+                for image in uploaded_images:
+                    ImageLogement.objects.create(
+                        annonce=annonce,
+                        images=image
+                    )
+                print(f"{len(uploaded_images)} images uploadées")
 
-            activate_url = 'http://'+domain+link
-            email_subject = 'Activez votre compte'
-            email_body = 'Hi '+user.first_name + ' Cliquez sur ce lien pour vérifier votre compte\n' \
-                         + activate_url
+                # Créer les objets associés
+                Condition.objects.create(annonce=annonce)
+                Address.objects.create(account=user)
+                print("Objets associés créés")
 
-            email = EmailMessage(
-                email_subject,
-                email_body,
-                'noreply@lhoman.com',
-                [email],
-            )
-            email.send(fail_silently=False)
-            return HttpResponse('Activez votre compte avec le lien envoyé à votre adresse mail')
+                # Envoi d'email de confirmation
+                try:
+                    uidb64 = urlsafe_base64_encode(force_bytes(user.id))
+                    domain = get_current_site(request).domain
+                    link = reverse('activate', kwargs={
+                        'uidb64': uidb64, 
+                        'token': token_generator.make_token(user)
+                    })
+                    activate_url = 'http://' + domain + link
+                    
+                    email_subject = 'Activez votre compte'
+                    email_body = f'Bonjour {user.first_name},\n\nCliquez sur ce lien pour activer votre compte:\n{activate_url}'
+
+                    email = EmailMessage(
+                        email_subject,
+                        email_body,
+                        'noreply@lhoman.com',
+                        [user.email],
+                    )
+                    email.send(fail_silently=False)
+                    print("Email envoyé avec succès")
+                    
+                    messages.success(request, f'Annonce créée avec succès ! Un email de confirmation a été envoyé à {user.email}')
+                    return redirect('creer-annonce')
+                    
+                except Exception as e:
+                    print(f"Erreur envoi email: {e}")
+                    messages.warning(request, f'Annonce créée avec succès ! Cependant, l\'email de confirmation n\'a pas pu être envoyé.')
+                    return redirect('creer-annonce')
+                    
+            except Exception as e:
+                print(f"Erreur lors de la création: {e}")
+                messages.error(request, f'Erreur lors de la création de l\'annonce: {e}')
+        
     else:
         userForm = CreateUserForm()
         annonceForm = AnnonceForm()
 
     context = {'annonceForm': annonceForm, 'userForm': userForm}
-
-    return render(request,'annonce/creer-annonce.html',context)
+    return render(request, 'annonce/creer-annonce.html', context)
 
 class VerificationView(View):
     def get(self, request, uidb64, token):
