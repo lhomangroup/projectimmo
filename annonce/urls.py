@@ -6,8 +6,8 @@ urlpatterns = [
     # Création d'annonces
     path('creer-annonce/', views.create_annonce, name='creer-annonce'),
     path('logged-annonce/', views.logged_annonce, name='logged-annonce'),
-    path('login/', views.login_user, name='login-annonce'),
-    path('logout/', views.logout_annonce, name='logout-annonce'),
+    path('login-annonce/', views.login_user, name='login-annonce'),
+    path('logout-annonce/', views.logout_annonce, name='logout-annonce'),
     
     # Dashboard
     path('dashboard/list/', views.dashboard_list, name='dashboard-list'),
@@ -39,9 +39,6 @@ urlpatterns = [
     
     # Profile
     path('profile/', views.profile_annonce, name='profile-annonce'),
-    
-    # Activation
-    path('activate/<uidb64>/<token>/', views.VerificationView.as_view(), name='activate'),
     
     # DocuSign
     path('get-access-code/', views.get_access_code, name='get_access_code'),
