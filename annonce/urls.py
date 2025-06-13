@@ -1,38 +1,46 @@
-from django.urls import re_path
-from django.contrib import admin
+
 from django.urls import path
 from . import views
-from produit import views as produit_views
-from .views import VerificationView
+
 urlpatterns = [
+    # Création d'annonces
     path('creer-annonce/', views.create_annonce, name='creer-annonce'),
-    path('register/', views.inscriptionPage, name='register'),
-    path('', views.login_user, name='login-annonce'),
-    path('logout-annonce', views.logout_annonce, name='logout-annonce'),
-    path('logged-annonce', views.logged_annonce, name='logged-annonce'),
-    path('annonce-profil', views.profile_annonce, name='annonce-profil'),
-    path('activate/<uidb64>/<token>', VerificationView.as_view(), name='activate'),
-    path('gerer-annonce', views.gerer_annonce, name='gerer-annonce'),
-    path('dashboard/', views.dashboard_list, name='dashboard-list'),
-    path('dashboard/<str:pk>', views.dashboard_view, name='dashboard-annonce'),
-    path('dashboard/description/<str:pk>/', views.description_view, name='dashboard-description'),
-    path('dashboard/dureeLocation/<str:pk>/', views.dureeLocation_view, name='dashboard-dureelocation'),
-    path('dashboard/equipment/<str:pk>/', views.equipment_view, name='dashboard-equipment'),
-    path('dashboard/loyer/<str:pk>/', views.loyer_view, name='dashboard-loyer'),
-    path('dashboard/photos/<str:pk>/', views.image_view, name='dashboard-image'),
-    path('dashboard/photos/delete/<str:pk>/', views.delete_image, name='delete-image'),
-    path('dashboard/calendrier/<str:pk>/', views.calendrier, name='dashboard-calendrier'),
-    path('dashboard/calendrier/create/<str:pk>/', views.create_calendrier, name='create-calendrier'),
-    path('dashboard/calendrier/edit/<str:pk>/', views.edit_calendrier, name='calendrier-edit'),
-    path('dashboard/calendrier/delete/<str:pk>/', views.delete_calendrier, name='calendrier-delete'),
-    path('dashboard/calendrier/delete_confirm/<str:pk>/', views.delete_calendrier_confirm, name='calendrier-delete-confirm'),
-    path('dashboard/conditions/<str:pk>/', views.condition_view, name='dashboard-condition'),
-    path('dashboard/diagnostic/<str:pk>/', views.diagnsotic_view, name='dashboard-diagnostic'),
-    path('dashboard/usercoord/<str:pk>/', views.user_view_dashboard, name='dashboard-usercoord'),
-    path('tableau de bord/verification/<str:pk>/', views.verification_view, name="dashboard-verif"),
-    path('get_access_code/', views.get_access_code, name="get_access_code"),
-    path('auth_login/', views.auth_login, name="auth_login"),
-    path('profile/', views.profile_annonce, name="profile-annonce"),
-    path('user_coord_dashboard/<str:pk>/', views.user_coord_dashboard, name="user-coord-dashboard"),
-    path('<int:pk>/', views.detail_annonce, name="detail-annonce"),
+    path('logged-annonce/', views.logged_annonce, name='logged-annonce'),
+    path('login-annonce/', views.login_user, name='login-annonce'),
+    path('logout-annonce/', views.logout_annonce, name='logout-annonce'),
+    
+    # Dashboard
+    path('dashboard/list/', views.dashboard_list, name='dashboard-list'),
+    path('dashboard/<int:pk>/', views.dashboard_view, name='dashboard-annonce'),
+    path('dashboard/description/<int:pk>/', views.description_view, name='dashboard-description'),
+    path('dashboard/equipment/<int:pk>/', views.equipment_view, name='dashboard-equipment'),
+    path('dashboard/duree/<int:pk>/', views.dureeLocation_view, name='dashboard-duree'),
+    path('dashboard/loyer/<int:pk>/', views.loyer_view, name='dashboard-loyer'),
+    path('dashboard/images/<int:pk>/', views.image_view, name='dashboard-image'),
+    path('dashboard/calendrier/<int:pk>/', views.calendrier, name='dashboard-calendrier'),
+    path('dashboard/conditions/<int:pk>/', views.condition_view, name='dashboard-conditions'),
+    path('dashboard/diagnostic/<int:pk>/', views.diagnsotic_view, name='dashboard-diagnostic'),
+    path('dashboard/user/<int:pk>/', views.user_view_dashboard, name='dashboard-user'),
+    path('dashboard/verification/<int:pk>/', views.verification_view, name='dashboard-verification'),
+    path('dashboard/usercoord/<int:pk>/', views.user_coord_dashboard, name='dashboard-usercoord'),
+    
+    # Calendrier
+    path('calendrier/create/<int:pk>/', views.create_calendrier, name='create-calendrier'),
+    path('calendrier/edit/<int:pk>/', views.edit_calendrier, name='edit-calendrier'),
+    path('calendrier/delete/<int:pk>/', views.delete_calendrier, name='delete-calendrier'),
+    path('calendrier/delete-confirm/<int:pk>/', views.delete_calendrier_confirm, name='delete-calendrier-confirm'),
+    
+    # Images
+    path('image/delete/<int:pk>/', views.delete_image, name='delete-image'),
+    
+    # Annonces publiques
+    path('detail/<int:pk>/', views.detail_annonce, name='detail-annonce'),
+    path('gerer/', views.gerer_annonce, name='gerer-annonce'),
+    
+    # Profile
+    path('profile/', views.profile_annonce, name='profile-annonce'),
+    
+    # DocuSign
+    path('get-access-code/', views.get_access_code, name='get_access_code'),
+    path('auth-login/', views.auth_login, name='auth_login'),
 ]

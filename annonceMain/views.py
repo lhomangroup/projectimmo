@@ -1,19 +1,13 @@
-from django.shortcuts import render
-
-# Create your views here.
-
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from account.models import *
-
 from .models import *
 from annonce.models import *
 from annonce.forms import *
 from django.views import View
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
-
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from annonce.models import *
@@ -27,7 +21,10 @@ from django.http import HttpResponse
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-# Create your views here.
+def home(request):
+    """Vue principale - redirige vers la création d'annonce"""
+    return redirect('creer-annonce')
+
 def annonceHome(request):
     query_ville = request.GET.get('query_ville')
     query_location = request.GET.get('query_location')
