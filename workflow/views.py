@@ -79,6 +79,10 @@ def workflow(request):
                 '''.format(data['f_name'], data['s_name'], data['id'], data['my_file_avis'], data['my_file_quittance'],
                            data['my_file_paye'], data['mail'])
             send_mail(data['f_name'], message, '', [mail])
+            # Rediriger avec un message de succès
+            from django.contrib import messages
+            messages.success(request, f'Dossier workflow créé avec succès pour {f_name} {s_name}. Un email a été envoyé à {mail}.')
+            return redirect('workflow')
     context = {'form': form}
     return render(request, 'workflow/workflow.html', context)
 
