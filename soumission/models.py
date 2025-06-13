@@ -7,6 +7,12 @@ from django.core.exceptions import ValidationError
 import re
 
 
+def validate_phone_number(value):
+    """Validation personnalisée pour s'assurer que le numéro ne contient que des chiffres et +"""
+    if not re.match(r'^[\+0-9]+$', value):
+        raise ValidationError('Le numéro de téléphone ne doit contenir que des chiffres et éventuellement le symbole +')
+    
+
 class PlanningPla(models.Model):
     pla_id = models.AutoField(primary_key=True)
     pla_intitule = models.CharField(
@@ -75,13 +81,13 @@ class ClientCli(models.Model):
     cli_situation = models.CharField(
         max_length=100, blank=False, null=True, verbose_name='Situation matrimoniale', choices=SITUATION)
     phone_regex = RegexValidator(
-        regex=r'^(\+33|0)[1-9](\d{8})$',
-        message="Le numéro de téléphone doit être au format français: +33123456789 ou 0123456789"
+        regex=r'^(\+33[1-9]\d{8}|0[1-9]\d{8})$',
+        message="Le numéro de téléphone doit être au format français valide: +33123456789 ou 0123456789 (uniquement des chiffres)"
     )
     cli_contact = models.CharField(
-        validators=[phone_regex], max_length=20, blank=False, null=True, 
+        validators=[phone_regex, validate_phone_number], max_length=20, blank=False, null=True, 
         verbose_name='Numéro de téléphone',
-        help_text='Format: +33123456789 ou 0123456789')
+        help_text='Format: +33123456789 ou 0123456789 (uniquement des chiffres)')
     cli_email = models.EmailField(
         max_length=100, blank=False, null=True, verbose_name='Adresse email',
         help_text='Format: exemple@domaine.com')
