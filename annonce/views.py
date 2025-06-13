@@ -183,7 +183,12 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
-            return redirect('logged-annonce')
+            
+            # Rediriger selon le type d'utilisateur
+            if user.typelocataire == 'PART':  # Particulier (locataire)
+                return redirect('dashboard-list')  # Dashboard des annonces existantes
+            else:  # Professionnel (propriétaire/agent)
+                return redirect('logged-annonce')  # Page de création d'annonce
 
     context = {}
     return render(request, 'compte/login-annonce.html')
@@ -194,6 +199,9 @@ def logout_annonce(request):
 
 @login_required(login_url='login-annonce')
 def logged_annonce(request):
+    # Vérifier que l'utilisateur est un professionnel
+    if request.user.typelocataire == 'PART':  # Si c'est un particulier (locataire)
+        return redirect('dashboard-list')  # Le rediriger vers le dashboard
     if request.method == 'POST':
         print(f"POST reçu pour l'utilisateur: {request.user.email}")
         print(f"Données POST: {request.POST}")
@@ -274,18 +282,27 @@ def gerer_annonce(request):
 
 @login_required
 def dashboard_list(request):
-    """Vue principale du tableau de bord listant toutes les annonces de l'utilisateur"""
+    """Vue principale du tableau de bord listant les annonces selon le type d'utilisateur"""
     print(f"Dashboard_list appelé pour l'utilisateur: {request.user.email}")
     print(f"Utilisateur authentifié: {request.user.is_authenticated}")
+    print(f"Type d'utilisateur: {request.user.get_typelocataire_display()}")
 
-    annonces = Annonce.objects.filter(user=request.user).order_by('-id')
+    if request.user.typelocataire == 'PART':  # Particulier (locataire)
+        # Afficher toutes les annonces disponibles pour les locataires
+        annonces = Annonce.objects.all().order_by('-id')
+        template = 'annonce/search/annonce_result.html'
+        context = {'annonces': annonces, 'is_locataire': True}
+    else:  # Professionnel (propriétaire/agent)
+        # Afficher seulement leurs propres annonces
+        annonces = Annonce.objects.filter(user=request.user).order_by('-id')
+        template = 'annonce/dashboard/dashboard_list.html'
+        context = {'annonces': annonces, 'is_locataire': False}
+        
+        for annonce in annonces:
+            print(f"Annonce ID: {annonce.id}, Titre: {annonce.titre_logement}")
+
     print(f"Nombre d'annonces trouvées: {annonces.count()}")
-
-    for annonce in annonces:
-        print(f"Annonce ID: {annonce.id}, Titre: {annonce.titre_logement}")
-
-    context = {'annonces': annonces}
-    return render(request, 'annonce/dashboard/dashboard_list.html', context)
+    return render(request, template, context)
 
 @login_required
 def description_view(request, pk):
