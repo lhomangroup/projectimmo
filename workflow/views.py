@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import HttpResponse
+from django.contrib import messages
 from .forms import *
 from .models import File
 from django import template
@@ -78,10 +79,14 @@ def workflow(request):
                 From: {}
                 '''.format(data['f_name'], data['s_name'], data['id'], data['my_file_avis'], data['my_file_quittance'],
                            data['my_file_paye'], data['mail'])
-            send_mail(data['f_name'], message, '', [mail])
-            # Rediriger avec un message de succès
-            from django.contrib import messages
-            messages.success(request, f'Dossier workflow créé avec succès pour {f_name} {s_name}. Un email a été envoyé à {mail}.')
+            try:
+                send_mail(data['f_name'], message, '', [mail])
+                # Message de succès après envoi réussi de l'email
+                messages.success(request, f'Dossier workflow créé avec succès pour {f_name} {s_name}. Un email a été envoyé à {mail}.')
+            except Exception as e:
+                # Message d'erreur si l'envoi d'email échoue
+                messages.error(request, f'Dossier workflow créé pour {f_name} {s_name}, mais l\'envoi d\'email a échoué: {str(e)}')
+            
             return redirect('workflow')
     context = {'form': form}
     return render(request, 'workflow/workflow.html', context)

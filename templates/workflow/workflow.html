@@ -17,6 +17,11 @@
             background-color: #d4edda;
             border-color: #c3e6cb;
         }
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
         .alert-dismissible .close {
             position: relative;
             top: -2px;
@@ -241,5 +246,25 @@
             <button type="submit">Créer le dossier</button>
         </form>
     </div>
+
+    <script>
+        // Script pour fermer les alertes
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeButtons = document.querySelectorAll('.close');
+            closeButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    this.parentElement.style.display = 'none';
+                });
+            });
+            
+            // Auto-fermeture après 5 secondes
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 5000);
+        });
+    </script>
 </body>
 </html>
