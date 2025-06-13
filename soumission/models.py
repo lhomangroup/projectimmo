@@ -85,8 +85,27 @@ class ClientCli(models.Model):
         max_length=100, blank=False, null=True, verbose_name='Ville')
     cli_lieu_recherche = models.CharField(
         max_length=100, blank=False, null=True, verbose_name='Lieu de recherche')
+    
+    TYPE_BIEN_CHOICES = [
+        ('studio', 'Studio'),
+        ('t1', 'T1 (1 pièce)'),
+        ('t2', 'T2 (2 pièces)'),
+        ('t3', 'T3 (3 pièces)'),
+        ('t4', 'T4 (4 pièces)'),
+        ('t5', 'T5 (5 pièces)'),
+        ('t6_plus', 'T6 et plus'),
+        ('maison_2_pieces', 'Maison 2 pièces'),
+        ('maison_3_pieces', 'Maison 3 pièces'),
+        ('maison_4_pieces', 'Maison 4 pièces'),
+        ('maison_5_pieces', 'Maison 5 pièces'),
+        ('maison_6_pieces_plus', 'Maison 6 pièces et plus'),
+        ('loft', 'Loft'),
+        ('duplex', 'Duplex'),
+    ]
+
     cli_type_bien = models.CharField(
-        max_length=100, blank=False, null=False, help_text='Maison ou Appart et taille', verbose_name='Type de bien')
+        max_length=100, blank=False, null=False, choices=TYPE_BIEN_CHOICES, 
+        help_text='Maison ou Appart et taille', verbose_name='Type de bien')
     cli_pack = models.CharField(
         max_length=100, blank=False, null=True, verbose_name='Pack', choices=CHOICE_PACK)
     cli_budget = models.DecimalField(
