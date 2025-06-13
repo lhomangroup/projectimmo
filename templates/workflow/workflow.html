@@ -155,9 +155,9 @@
         
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" aria-label="Close">
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -262,13 +262,17 @@
                 });
             });
             
-            // Auto-fermeture après 5 secondes
+            // Auto-fermeture après 8 secondes
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert');
                 alerts.forEach(function(alert) {
-                    alert.style.display = 'none';
+                    alert.style.opacity = '0';
+                    alert.style.transition = 'opacity 0.5s';
+                    setTimeout(function() {
+                        alert.style.display = 'none';
+                    }, 500);
                 });
-            }, 5000);
+            }, 8000);
         });
     </script>
 </body>

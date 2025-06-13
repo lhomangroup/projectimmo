@@ -94,14 +94,15 @@ def workflow(request):
                 email.send(fail_silently=False)
                 
                 # Message de succès après envoi réussi de l'email
-                messages.success(request, f'Dossier workflow créé avec succès pour {f_name} {s_name}. Un email de notification a été envoyé.')
+                messages.success(request, f'✅ Dossier workflow créé avec succès pour {f_name} {s_name}. Un email de notification a été envoyé à l\'administrateur.')
                 print(f"Email envoyé avec succès pour {f_name} {s_name}")
                 
             except Exception as e:
                 # Message d'erreur si l'envoi d'email échoue
-                messages.error(request, f'Dossier workflow créé pour {f_name} {s_name}, mais l\'envoi d\'email a échoué: {str(e)}')
+                messages.error(request, f'❌ Dossier workflow créé pour {f_name} {s_name}, mais l\'envoi d\'email a échoué: {str(e)}')
                 print(f"Erreur envoi email: {str(e)}")
             
+            # Redirection avec message dans la session
             return redirect('workflow')
     context = {'form': form}
     return render(request, 'workflow/workflow.html', context)
