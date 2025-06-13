@@ -43,4 +43,5 @@ urlpatterns = [
     path('get-access-code/', views.get_access_code, name='get_access_code'),
     path('auth-login/', views.auth_login, name='auth_login'),
     path('activate/<uidb64>/<token>/', views.VerificationView.as_view(), name='activate'),
+    path('inscription-simple/', views.inscription_simple, name='inscription-simple'),
 ]

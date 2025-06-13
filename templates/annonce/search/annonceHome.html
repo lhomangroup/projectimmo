@@ -82,6 +82,9 @@
         .btn-success {
             background-color: #28a745;
         }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
         .btn:hover {
             opacity: 0.8;
         }
@@ -95,6 +98,7 @@
 
     <div class="actions">
         <a href="{% url 'creer-annonce' %}" class="btn btn-primary">S'inscrire & Créer une annonce</a>
+        <a href="{% url 'inscription-simple' %}" class="btn btn-secondary">S'inscrire simplement</a>
         <a href="{% url 'login-annonce' %}" class="btn btn-success">Se connecter</a>
     </div>
 

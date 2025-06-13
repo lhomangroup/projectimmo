@@ -646,3 +646,34 @@ def detail_annonce(request, pk):
         'address': annonce.address
     }
     return render(request, 'annonce/detail_annonce.html', context)
+
+@unauthenticated_user
+def inscription_simple(request):
+    """Vue pour l'inscription simple sans création d'annonce"""
+    from django.contrib import messages
+
+    if request.method == 'POST':
+        userForm = CreateUserForm(request.POST)
+        
+        if userForm.is_valid():
+            try:
+                # Créer l'utilisateur
+                user = userForm.save()
+                user.is_active = True
+                user.save()
+                
+                # Créer une adresse vide pour l'utilisateur
+                Address.objects.create(account=user)
+                
+                messages.success(request, f'Compte créé avec succès pour {user.email}. Vous pouvez maintenant vous connecter.')
+                return redirect('login-annonce')
+                
+            except Exception as e:
+                messages.error(request, f'Erreur lors de la création du compte: {e}')
+        else:
+            messages.error(request, f'Erreur dans les informations: {userForm.errors}')
+    else:
+        userForm = CreateUserForm()
+
+    context = {'userForm': userForm}
+    return render(request, 'annonce/inscription-simple.html', context)
