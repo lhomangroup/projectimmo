@@ -83,8 +83,55 @@ class ClientCli(models.Model):
         verbose_name='Pays', null=True, blank=False, )
     cli_ville = models.CharField(
         max_length=100, blank=False, null=True, verbose_name='Ville')
+    
+    LIEU_RECHERCHE_CHOICES = [
+        ('paris', 'Paris'),
+        ('lyon', 'Lyon'),
+        ('marseille', 'Marseille'),
+        ('toulouse', 'Toulouse'),
+        ('nice', 'Nice'),
+        ('nantes', 'Nantes'),
+        ('montpellier', 'Montpellier'),
+        ('strasbourg', 'Strasbourg'),
+        ('bordeaux', 'Bordeaux'),
+        ('lille', 'Lille'),
+        ('rennes', 'Rennes'),
+        ('reims', 'Reims'),
+        ('le_havre', 'Le Havre'),
+        ('saint_etienne', 'Saint-Étienne'),
+        ('toulon', 'Toulon'),
+        ('grenoble', 'Grenoble'),
+        ('dijon', 'Dijon'),
+        ('angers', 'Angers'),
+        ('nimes', 'Nîmes'),
+        ('villeurbanne', 'Villeurbanne'),
+        ('clermont_ferrand', 'Clermont-Ferrand'),
+        ('aix_en_provence', 'Aix-en-Provence'),
+        ('brest', 'Brest'),
+        ('limoges', 'Limoges'),
+        ('tours', 'Tours'),
+        ('amiens', 'Amiens'),
+        ('perpignan', 'Perpignan'),
+        ('metz', 'Metz'),
+        ('besancon', 'Besançon'),
+        ('orleans', 'Orléans'),
+        ('rouen', 'Rouen'),
+        ('mulhouse', 'Mulhouse'),
+        ('caen', 'Caen'),
+        ('nancy', 'Nancy'),
+        ('argenteuil', 'Argenteuil'),
+        ('montreuil', 'Montreuil'),
+        ('roubaix', 'Roubaix'),
+        ('tourcoing', 'Tourcoing'),
+        ('avignon', 'Avignon'),
+        ('dunkerque', 'Dunkerque'),
+        ('banlieue_parisienne', 'Banlieue parisienne'),
+        ('ile_de_france', 'Île-de-France (hors Paris)'),
+        ('autres', 'Autres villes'),
+    ]
+    
     cli_lieu_recherche = models.CharField(
-        max_length=100, blank=False, null=True, verbose_name='Lieu de recherche')
+        max_length=100, blank=False, null=True, choices=LIEU_RECHERCHE_CHOICES, verbose_name='Lieu de recherche')
     
     TYPE_BIEN_CHOICES = [
         ('studio', 'Studio'),
