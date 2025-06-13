@@ -35,6 +35,9 @@ urlpatterns = [
     # Annonces publiques
     path('detail/<int:pk>/', views.detail_annonce, name='detail-annonce'),
     path('gerer-annonce/', views.gerer_annonce, name='gerer-annonce'),
+    path('detail_annonce/<str:pk>/', views.detail_annonce, name='detail-annonce'),
+    path('selectionner/<str:pk>/', views.selectionner_annonce, name='selectionner-annonce'),
+    path('annuler-selection/<str:pk>/', views.annuler_selection_annonce, name='annuler-selection-annonce'),
 
     # Profile
     path('profile/', views.profile_annonce, name='profile-annonce'),

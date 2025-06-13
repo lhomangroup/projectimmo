@@ -123,6 +123,14 @@ class Annonce(models.Model):
         related_name = 'user_reserved'
     )
     reserved = models.BooleanField(default=False)
+    locataire_interesse = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='annonces_interessees',
+        verbose_name='Locataire intéressé'
+    )
     address = models.OneToOneField(
         AdressAnnonce,
         on_delete=models.CASCADE,

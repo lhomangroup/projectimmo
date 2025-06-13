@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -91,7 +90,7 @@
         <p><strong>Bienvenue {{ user.first_name }} {{ user.last_name }}</strong> - Vous êtes connecté en tant que locataire</p>
     </div>
     {% endif %}
-    
+
     <div class="back-link">
         <a href="/" class="btn">← Retour à l'accueil</a>
         <a href="/annonce/searchPage/" class="btn">Nouvelle recherche</a>
@@ -168,11 +167,19 @@
     </div>
     {% endif %}
 
-    {% if user.is_authenticated and user.typelocataire == 'PART' %}
-    <div style="text-align: center; margin: 40px 0;">
-        <a href="/soumission/" class="btn" style="background-color: #28a745; color: white; padding: 15px 30px; font-size: 18px; border-radius: 8px; text-decoration: none; display: inline-block;">📋 Soumettre mon Dossier</a>
+    
+    <a href="/annonce/detail_annonce/{{ ann.id }}" class="btn btn-primary">Voir détails</a>
+            {% if user.is_authenticated and user.typelocataire == 'PART' %}
+            <a href="/annonce/selectionner/{{ ann.id }}/" class="btn" style="background-color: #28a745; margin-left: 10px;" onclick="return confirm('Sélectionner cette annonce pour soumission de dossier ?')">
+                ✅ Sélectionner cette annonce
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-    {% elif not user.is_authenticated %}
+    {% endif %}
+
+    {% if not user.is_authenticated %}
     <div style="text-align: center; margin: 40px 0;">
         <a href="/annonce/login-annonce/" class="btn" style="background-color: #007bff;">🔐 Se connecter pour soumettre un dossier</a>
     </div>
@@ -180,3 +187,4 @@
     </div>
 </body>
 </html>
+```The code modification involves adding buttons to select rental listings and adjusting authentication-related conditional rendering.

@@ -288,10 +288,21 @@ def dashboard_list(request):
     print(f"Type d'utilisateur: {request.user.get_typelocataire_display()}")
 
     if request.user.typelocataire == 'PART':  # Particulier (locataire)
-        # Afficher toutes les annonces disponibles pour les locataires
-        annonces = Annonce.objects.all().order_by('-id')
-        template = 'annonce/search/annonce_result.html'
-        context = {'annonces': annonces, 'is_locataire': True}
+        # Vérifier s'il y a une annonce sélectionnée pour ce locataire
+        annonce_selectionnee = Annonce.objects.filter(locataire_interesse=request.user).first()
+        
+        if annonce_selectionnee:
+            # Afficher l'annonce sélectionnée avec option d'annulation
+            template = 'annonce/dashboard/dashboard_locataire.html'
+            context = {
+                'annonce_selectionnee': annonce_selectionnee,
+                'is_locataire': True
+            }
+        else:
+            # Afficher toutes les annonces disponibles pour les locataires
+            annonces = Annonce.objects.filter(locataire_interesse__isnull=True).order_by('-id')
+            template = 'annonce/search/annonce_result.html'
+            context = {'annonces': annonces, 'is_locataire': True}
     else:  # Professionnel (propriétaire/agent)
         # Afficher seulement leurs propres annonces
         annonces = Annonce.objects.filter(user=request.user).order_by('-id')
@@ -301,7 +312,7 @@ def dashboard_list(request):
         for annonce in annonces:
             print(f"Annonce ID: {annonce.id}, Titre: {annonce.titre_logement}")
 
-    print(f"Nombre d'annonces trouvées: {annonces.count()}")
+    print(f"Nombre d'annonces trouvées: {len(context.get('annonces', [annonce_selectionnee] if 'annonce_selectionnee' in locals() else [])}")
     return render(request, template, context)
 
 @login_required
@@ -663,6 +674,45 @@ def detail_annonce(request, pk):
         'address': annonce.address
     }
     return render(request, 'annonce/detail_annonce.html', context)
+
+@login_required
+def selectionner_annonce(request, pk):
+    """Vue pour qu'un locataire sélectionne une annonce pour soumission de dossier"""
+    if request.user.typelocataire != 'PART':
+        return redirect('dashboard-list')
+    
+    annonce = get_object_or_404(Annonce, pk=pk)
+    
+    # Vérifier que l'annonce n'est pas déjà sélectionnée par un autre locataire
+    if annonce.locataire_interesse and annonce.locataire_interesse != request.user:
+        from django.contrib import messages
+        messages.error(request, 'Cette annonce est déjà sélectionnée par un autre locataire.')
+        return redirect('dashboard-list')
+    
+    # Désélectionner toute autre annonce de ce locataire
+    Annonce.objects.filter(locataire_interesse=request.user).update(locataire_interesse=None)
+    
+    # Sélectionner cette annonce
+    annonce.locataire_interesse = request.user
+    annonce.save()
+    
+    from django.contrib import messages
+    messages.success(request, f'Annonce "{annonce.titre_logement}" sélectionnée. Vous pouvez maintenant soumettre votre dossier.')
+    return redirect('dashboard-list')
+
+@login_required
+def annuler_selection_annonce(request, pk):
+    """Vue pour qu'un locataire annule la sélection d'une annonce"""
+    if request.user.typelocataire != 'PART':
+        return redirect('dashboard-list')
+    
+    annonce = get_object_or_404(Annonce, pk=pk, locataire_interesse=request.user)
+    annonce.locataire_interesse = None
+    annonce.save()
+    
+    from django.contrib import messages
+    messages.success(request, 'Sélection annulée. Vous pouvez maintenant choisir une autre annonce.')
+    return redirect('dashboard-list')
 
 @unauthenticated_user
 def inscription_simple(request):
