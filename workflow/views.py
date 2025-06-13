@@ -53,7 +53,6 @@ def workflow(request):
             myId.user = user
             myId.save()
             myId = myId.id
-            myAnnonce.save()
             data = {
                 'id': myId,
                 'f_name': f_name,
@@ -197,7 +196,3 @@ def workfinal(request, pk):
         send_mail(data2['comment'], message, '', [mail])
     context = {'Files': Files, 'form': form}
     return render(request, 'workflow/final.html', context)
-
-
-
-
