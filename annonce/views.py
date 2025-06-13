@@ -190,7 +190,7 @@ def login_user(request):
 
 def logout_annonce(request):
     logout(request)
-    return redirect('creer-annonce')
+    return redirect('annonceHome')
 
 @login_required(login_url='login-annonce')
 def logged_annonce(request):
