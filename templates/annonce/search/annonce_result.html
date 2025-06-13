@@ -168,22 +168,16 @@
     {% endif %}
 
 
-    <a href="/annonce/detail_annonce/{{ ann.id }}" class="btn btn-primary">Voir détails</a>
-            {% if user.is_authenticated and user.typelocataire == 'PART' %}
-            <a href="/annonce/selectionner/{{ ann.id }}/" class="btn" style="background-color: #28a745; margin-left: 10px;" onclick="return confirm('Sélectionner cette annonce pour soumission de dossier ?')">
-                ✅ Sélectionner cette annonce
-            </a>
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {% if not user.is_authenticated %}
     <div style="text-align: center; margin: 40px 0;">
+        {% if user.is_authenticated and user.typelocataire == 'PART' %}
+        <a href="/annonce/selectionner/{{ annonce.id }}/" class="btn btn-success" onclick="return confirm('Sélectionner cette annonce pour soumission de dossier ?')">
+            ✅ Sélectionner cette annonce
+        </a>
+        {% endif %}
+        
+        {% if not user.is_authenticated %}
         <a href="/annonce/login-annonce/" class="btn" style="background-color: #007bff;">🔐 Se connecter pour soumettre un dossier</a>
-    </div>
-    {% endif %}
+        {% endif %}
     </div>
 </body>
 </html>
