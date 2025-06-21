@@ -33,7 +33,7 @@
                             {% endif %}
                         </div>
 
-                        <form method="post">
+                        <form method="post" onsubmit="return confirm('Êtes-vous vraiment sûr de vouloir supprimer cette annonce ? Cette action est irréversible.');">
                             {% csrf_token %}
                             <div class="d-flex justify-content-between">
                                 <a href="{% url 'dashboard-list' %}" class="btn btn-secondary">

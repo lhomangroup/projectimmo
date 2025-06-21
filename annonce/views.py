@@ -756,35 +756,61 @@ def annuler_selection_annonce(request, pk):
 @login_required
 def supprimer_annonce(request, pk):
     """Vue pour supprimer une annonce (pour les propriétaires)"""
+    from django.contrib import messages
+    import os
+    
     annonce = get_object_or_404(Annonce, pk=pk)
     
     # Vérifier que l'utilisateur est le propriétaire de l'annonce
     if annonce.user != request.user:
-        from django.contrib import messages
         messages.error(request, 'Vous n\'êtes pas autorisé à supprimer cette annonce.')
         return redirect('dashboard-list')
     
     if request.method == 'POST':
         titre_annonce = annonce.titre_logement
         
-        # Supprimer les images associées
-        images = ImageLogement.objects.filter(annonce=annonce)
-        for image in images:
-            # Supprimer le fichier physique
-            if image.images:
-                try:
-                    import os
-                    if os.path.isfile(image.images.path):
-                        os.remove(image.images.path)
-                except:
-                    pass
-            image.delete()
+        try:
+            # Supprimer les images associées
+            images = ImageLogement.objects.filter(annonce=annonce)
+            for image in images:
+                # Supprimer le fichier physique
+                if image.images:
+                    try:
+                        if os.path.isfile(image.images.path):
+                            os.remove(image.images.path)
+                    except Exception as e:
+                        print(f"Erreur suppression fichier image: {e}")
+                image.delete()
+            
+            # Supprimer les objets liés manuellement si nécessaire
+            try:
+                if hasattr(annonce, 'condition'):
+                    annonce.condition.delete()
+            except:
+                pass
+                
+            try:
+                if hasattr(annonce, 'equipement'):
+                    annonce.equipement.delete()
+            except:
+                pass
+                
+            try:
+                if hasattr(annonce, 'address'):
+                    annonce.address.delete()
+            except:
+                pass
+            
+            # Supprimer l'annonce
+            annonce.delete()
+            
+            messages.success(request, f'L\'annonce "{titre_annonce}" a été supprimée avec succès.')
+            print(f"Annonce {pk} supprimée avec succès")
+            
+        except Exception as e:
+            print(f"Erreur lors de la suppression: {e}")
+            messages.error(request, f'Erreur lors de la suppression: {e}')
         
-        # Supprimer l'annonce (cela supprimera aussi automatiquement les objets liés par CASCADE)
-        annonce.delete()
-        
-        from django.contrib import messages
-        messages.success(request, f'L\'annonce "{titre_annonce}" a été supprimée avec succès.')
         return redirect('dashboard-list')
     
     context = {'annonce': annonce}
