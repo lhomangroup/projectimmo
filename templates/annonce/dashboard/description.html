@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -97,9 +96,9 @@
             <p>Annonce ID: {{ obj.id }}</p>
         </div>
 
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            
+
             <div class="form-group">
                 <label for="{{ form.titre_logement.id_for_label }}">Titre du logement:</label>
                 {{ form.titre_logement }}
@@ -138,7 +137,7 @@
             <div class="address-section">
                 <h3>Adresse du logement</h3>
                 <input type="hidden" name="adressComplete" value="true">
-                
+
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
@@ -185,7 +184,39 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-section">
+                <h2>Images du logement</h2>
+                <div class="form-group">
+                    <label for="images">Ajouter/Modifier des images :</label>
+                    <input type="file" name="images" id="images" multiple accept="image/*" class="form-control">
+                    <small class="form-text text-muted">Vous pouvez sélectionner plusieurs images à la fois. Les nouvelles images s'ajouteront aux existantes.</small>
+                </div>
+
+                {% if obj.imagelogement_set.all %}
+                    <div class="current-images mt-3">
+                        <h4>Images actuelles :</h4>
+                        <div class="row">
+                            {% for image in obj.imagelogement_set.all %}
+                                <div class="col-md-3 mb-2">
+                                    <div class="image-container" style="position: relative;">
+                                        <img src="{{ image.images.url }}" alt="Image du logement" class="img-thumbnail" style="width: 100%; height: 150px; object-fit: cover;">
+                                        <a href="{% url 'delete-image' image.id %}" 
+                                           class="btn btn-danger btn-sm" 
+                                           style="position: absolute; top: 5px; right: 5px; padding: 2px 6px;"
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette image ?')">
+                                            ×
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune image pour le moment.</p>
+                {% endif %}
+            </div>
+
+            <div style="margin-top: 30px;">
                 <button type="submit" class="btn">Sauvegarder</button>
                 <a href="{% url 'dashboard-list' %}" class="btn btn-secondary">Retour au tableau de bord</a>
             </div>

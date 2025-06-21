@@ -418,8 +418,21 @@ def description_view(request, pk):
                     myObject.save()
                     print(f"Nouvelle adresse créée: {ville}")
 
+            # Gérer l'upload d'images multiples
+            uploaded_images = request.FILES.getlist('images')
+            if uploaded_images:
+                for image in uploaded_images:
+                    ImageLogement.objects.create(
+                        annonce=myObject,
+                        images=image
+                    )
+                print(f"{len(uploaded_images)} nouvelles images uploadées")
+
             from django.contrib import messages
-            messages.success(request, 'Les informations ont été sauvegardées avec succès!')
+            if uploaded_images:
+                messages.success(request, f'Les informations ont été sauvegardées avec succès! {len(uploaded_images)} image(s) ajoutée(s).')
+            else:
+                messages.success(request, 'Les informations ont été sauvegardées avec succès!')
             return redirect(request.META.get('HTTP_REFERER', '/annonce/dashboard/list/'))
 
         except Exception as e:
