@@ -217,6 +217,15 @@
                 <a href="/soumission/" class="btn btn-success" style="font-size: 18px; padding: 15px 30px;">
                     📋 Soumettre mon Dossier
                 </a>
+                {% if annonce_selectionnee.plan_paiement_caution %}
+                    <a href="{% url 'voir_plan_paiement_caution' annonce_selectionnee.plan_paiement_caution.id %}" class="btn" style="background-color: #28a745;">
+                        💳 Voir mon plan de paiement caution
+                    </a>
+                {% else %}
+                    <a href="{% url 'creer-plan-caution' annonce_selectionnee.id %}" class="btn" style="background-color: #ffc107; color: black;">
+                        💰 Créer plan de paiement caution
+                    </a>
+                {% endif %}
                 <a href="/annonce/detail_annonce/{{ annonce_selectionnee.id }}/" class="btn">
                     👁️ Voir détails complets
                 </a>
