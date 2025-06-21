@@ -991,3 +991,14 @@ def liste_plans_paiement_proprietaire(request):
     
     context = {'plans': plans}
     return render(request, 'annonce/paiement/liste_plans_proprietaire.html', context)
+
+def proprietaire_annonce(request, pk):
+    """Afficher les informations du propriétaire d'une annonce"""
+    annonce = get_object_or_404(Annonce, pk=pk)
+    proprietaire = annonce.user
+    
+    context = {
+        'annonce': annonce,
+        'proprietaire': proprietaire
+    }
+    return render(request, 'annonce/proprietaire_info.html', context)

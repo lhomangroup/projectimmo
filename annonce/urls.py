@@ -45,8 +45,9 @@ urlpatterns = [
     # URLs pour le paiement de caution en mensualités
     path('creer-plan-caution/<int:pk>/', views.creer_plan_paiement_caution, name='creer-plan-caution'),
     path('voir-plan-caution/<int:pk>/', views.voir_plan_paiement_caution, name='voir_plan_paiement_caution'),
-    path('effectuer-paiement/<int:pk>/', views.effectuer_paiement_mensuel, name='effectuer_paiement_mensuel'),
-    path('plans-caution-proprietaire/', views.liste_plans_paiement_proprietaire, name='liste_plans_paiement_proprietaire'),
+    path('effectuer-paiement-mensuel/<int:pk>/', views.effectuer_paiement_mensuel, name='effectuer_paiement_mensuel'),
+    path('liste-plans-paiement-proprietaire/', views.liste_plans_paiement_proprietaire, name='liste_plans_paiement_proprietaire'),
+    path('proprietaire-annonce/<int:pk>/', views.proprietaire_annonce, name='proprietaire_annonce'),
 
     # Profile
     path('profile/', views.profile_annonce, name='profile-annonce'),

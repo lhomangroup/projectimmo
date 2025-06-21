@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Propriétaire de l'annonce</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .annonce-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .proprietaire-info {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .info-row {
+            margin: 10px 0;
+        }
+        .label {
+            font-weight: bold;
+            color: #333;
+        }
+        .value {
+            color: #666;
+            margin-left: 10px;
+        }
+        .back-btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .back-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'dashboard-list' %}" class="back-btn">← Retour</a>
+        
+        <h1>Informations du propriétaire</h1>
+        
+        <div class="annonce-info">
+            <h3>📋 Annonce concernée</h3>
+            <div class="info-row">
+                <span class="label">Titre:</span>
+                <span class="value">{{ annonce.titre_logement|default:"Sans titre" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Type:</span>
+                <span class="value">{{ annonce.get_hebergement_choice_display }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Catégorie:</span>
+                <span class="value">{{ annonce.get_type_location_choices_display }}</span>
+            </div>
+            {% if annonce.address %}
+            <div class="info-row">
+                <span class="label">Ville:</span>
+                <span class="value">{{ annonce.address.ville }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="proprietaire-info">
+            <h3>👤 Propriétaire</h3>
+            <div class="info-row">
+                <span class="label">Nom complet:</span>
+                <span class="value">{{ proprietaire.first_name }} {{ proprietaire.last_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Email:</span>
+                <span class="value">{{ proprietaire.email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Type de compte:</span>
+                <span class="value">{{ proprietaire.get_typelocataire_display }}</span>
+            </div>
+            {% if proprietaire.phone_number %}
+            <div class="info-row">
+                <span class="label">Téléphone:</span>
+                <span class="value">{{ proprietaire.phone_number }}</span>
+            </div>
+            {% endif %}
+            <div class="info-row">
+                <span class="label">Membre depuis:</span>
+                <span class="value">{{ proprietaire.date_joined|date:"d/m/Y" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Statut:</span>
+                <span class="value">
+                    {% if proprietaire.is_active %}
+                        <span style="color: green;">✓ Actif</span>
+                    {% else %}
+                        <span style="color: red;">✗ Inactif</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <a href="/annonce/detail_annonce/{{ annonce.id }}/" class="back-btn">Voir l'annonce complète</a>
+        </div>
+    </div>
+</body>
+</html>
