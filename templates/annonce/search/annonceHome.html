@@ -56,9 +56,36 @@
         }
         .annonce-card {
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .annonce-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .annonce-image {
+            width: 100%;
+            height: 200px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .annonce-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .no-image {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .annonce-content {
             padding: 15px;
-            background: #f9f9f9;
         }
         .annonce-card h3 {
             margin-top: 0;
@@ -139,17 +166,28 @@
         <h2>Dernières annonces disponibles</h2>
         {% for ann in annonce %}
         <div class="annonce-card">
-            <h3>{{ ann.titre_logement|default:"Logement disponible" }}</h3>
-            <p><strong>Type :</strong> {{ ann.get_type_location_choices_display }}</p>
-            <p><strong>Catégorie :</strong> {{ ann.categorie_logement }}</p>
-            <p><strong>Nombre de personnes :</strong> {{ ann.nombre_personne }}</p>
-            {% if ann.address %}
-                <p><strong>Ville :</strong> {{ ann.address.ville }}</p>
-            {% endif %}
-            {% if ann.loyer_tc %}
-                <p><strong>Loyer :</strong> {{ ann.loyer_tc }}€</p>
-            {% endif %}
-            <a href="/annonce/detail_annonce/{{ ann.id }}" class="btn btn-primary">Voir détails</a>
+            <div class="annonce-image">
+                {% with ann.imagelogement_set.first as first_image %}
+                    {% if first_image %}
+                        <img src="{{ first_image.images.url }}" alt="{{ ann.titre_logement|default:'Logement' }}">
+                    {% else %}
+                        <div class="no-image">📷 Aucune image</div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div class="annonce-content">
+                <h3>{{ ann.titre_logement|default:"Logement disponible" }}</h3>
+                <p><strong>Type :</strong> {{ ann.get_type_location_choices_display }}</p>
+                <p><strong>Catégorie :</strong> {{ ann.categorie_logement }}</p>
+                <p><strong>Nombre de personnes :</strong> {{ ann.nombre_personne }}</p>
+                {% if ann.address %}
+                    <p><strong>Ville :</strong> {{ ann.address.ville }}</p>
+                {% endif %}
+                {% if ann.loyer_tc %}
+                    <p><strong>Loyer :</strong> {{ ann.loyer_tc }}€</p>
+                {% endif %}
+                <a href="/annonce/detail_annonce/{{ ann.id }}" class="btn btn-primary">Voir détails</a>
+            </div>
         </div>
         {% endfor %}
     </div>
