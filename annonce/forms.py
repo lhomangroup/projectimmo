@@ -197,3 +197,31 @@ class DureeLOcationForm(ModelForm):
         super(DureeLOcationForm, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'POST'
+
+
+class PlanPaiementCautionForm(forms.ModelForm):
+    class Meta:
+        model = PlanPaiementCaution
+        fields = ['montant_caution_total', 'nombre_mensualites']
+        
+    def __init__(self, *args, **kwargs):
+        super(PlanPaiementCautionForm, self).__init__(*args, **kwargs)
+        self.fields['nombre_mensualites'].widget = forms.Select(choices=[
+            (1, '1 mois'),
+            (2, '2 mois'),
+            (3, '3 mois'),
+            (6, '6 mois'),
+            (12, '12 mois')
+        ])
+        self.helper = FormHelper()
+        self.helper.form_method = 'POST'
+
+class PaiementMensuelForm(forms.ModelForm):
+    class Meta:
+        model = PaiementMensuelCaution
+        fields = ['reference_paiement']
+        
+    def __init__(self, *args, **kwargs):
+        super(PaiementMensuelForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'POST'

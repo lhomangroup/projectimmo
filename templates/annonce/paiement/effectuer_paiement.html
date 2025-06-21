@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Effectuer un paiement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .paiement-info {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .info-box {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Effectuer un paiement mensuel</h1>
+        
+        <div class="paiement-info">
+            <h3>Détails du paiement</h3>
+            <p><strong>Annonce:</strong> {{ paiement.plan_paiement.annonce.titre_logement }}</p>
+            <p><strong>Mensualité:</strong> {{ paiement.numero_mensualite }} / {{ paiement.plan_paiement.nombre_mensualites }}</p>
+            <p><strong>Montant:</strong> {{ paiement.montant }}€</p>
+            <p><strong>Date d'échéance:</strong> {{ paiement.date_echeance|date:"d/m/Y" }}</p>
+        </div>
+        
+        <div class="info-box">
+            <strong>Important:</strong> En confirmant ce paiement, vous certifiez avoir effectué le virement du montant indiqué. 
+            Veuillez indiquer la référence de votre paiement pour faciliter le suivi.
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.reference_paiement.id_for_label }}">Référence du paiement:</label>
+                {{ form.reference_paiement }}
+                <small>Numéro de transaction, référence de virement, etc.</small>
+            </div>
+            
+            <button type="submit" class="btn btn-success">Confirmer le paiement</button>
+            <a href="{% url 'voir_plan_paiement_caution' paiement.plan_paiement.id %}" class="btn btn-secondary">Annuler</a>
+        </form>
+    </div>
+</body>
+</html>

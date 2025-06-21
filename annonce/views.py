@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.baseconv import base64
 from django.views import View
 
-from .models import Annonce, ImageLogement, AdressAnnonce, Condition, Equipement
+from .models import Annonce, ImageLogement, AdressAnnonce, Condition, Equipement, PlanPaiementCaution, PaiementMensuelCaution
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.http import HttpResponse, HttpResponseRedirect
@@ -22,7 +22,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from .utils import token_generator
 
 from .decorators import unauthenticated_user
-from .forms import AnnonceForm, LoggedForm, CreateUserForm, DescriptionForm, FormLoyer, FormEquipement, CategorieServicesForm, FormCalendrier, FormCondition, VerifImage, ServicesForm, FormDiagnostic, UserModif
+from .forms import AnnonceForm, LoggedForm, CreateUserForm, DescriptionForm, FormLoyer, FormEquipement, CategorieServicesForm, FormCalendrier, FormCondition, VerifImage, ServicesForm, FormDiagnostic, UserModif, PlanPaiementCautionForm, PaiementMensuelForm
 from account.models import Address
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -766,3 +766,126 @@ def inscription_simple(request):
 
     context = {'userForm': userForm}
     return render(request, 'annonce/inscription-simple.html', context)
+
+
+@login_required
+def creer_plan_paiement_caution(request, pk):
+    """Créer un plan de paiement pour la caution d'une annonce"""
+    annonce = get_object_or_404(Annonce, pk=pk)
+    
+    # Vérifier que l'utilisateur est le locataire intéressé
+    if request.user.typelocataire != 'PART' or annonce.locataire_interesse != request.user:
+        from django.contrib import messages
+        messages.error(request, 'Vous n\'êtes pas autorisé à créer un plan de paiement pour cette annonce.')
+        return redirect('dashboard-list')
+    
+    # Vérifier qu'il n'y a pas déjà un plan de paiement
+    if hasattr(annonce, 'plan_paiement_caution'):
+        from django.contrib import messages
+        messages.info(request, 'Un plan de paiement existe déjà pour cette annonce.')
+        return redirect('voir_plan_paiement_caution', pk=annonce.plan_paiement_caution.id)
+    
+    if request.method == 'POST':
+        form = PlanPaiementCautionForm(request.POST)
+        if form.is_valid():
+            plan = form.save(commit=False)
+            plan.annonce = annonce
+            plan.locataire = request.user
+            plan.save()
+            
+            # Créer les mensualités automatiquement
+            from datetime import date, timedelta
+            from dateutil.relativedelta import relativedelta
+            
+            date_debut = date.today() + relativedelta(months=1)  # Premier paiement le mois suivant
+            
+            for i in range(plan.nombre_mensualites):
+                PaiementMensuelCaution.objects.create(
+                    plan_paiement=plan,
+                    numero_mensualite=i + 1,
+                    montant=plan.montant_mensuel,
+                    date_echeance=date_debut + relativedelta(months=i)
+                )
+            
+            from django.contrib import messages
+            messages.success(request, f'Plan de paiement créé avec succès! {plan.nombre_mensualites} mensualités de {plan.montant_mensuel:.2f}€')
+            return redirect('voir_plan_paiement_caution', pk=plan.id)
+    else:
+        form = PlanPaiementCautionForm()
+    
+    context = {
+        'form': form,
+        'annonce': annonce
+    }
+    return render(request, 'annonce/paiement/creer_plan_caution.html', context)
+
+@login_required
+def voir_plan_paiement_caution(request, pk):
+    """Voir les détails d'un plan de paiement caution"""
+    plan = get_object_or_404(PlanPaiementCaution, pk=pk)
+    
+    # Vérifier les permissions
+    if request.user != plan.locataire and request.user != plan.annonce.user:
+        from django.contrib import messages
+        messages.error(request, 'Vous n\'êtes pas autorisé à voir ce plan de paiement.')
+        return redirect('dashboard-list')
+    
+    paiements = plan.paiements_mensuels.all()
+    
+    # Calculer les statistiques
+    paiements_payes = paiements.filter(statut='PAYE').count()
+    montant_total_paye = sum(p.montant for p in paiements if p.statut == 'PAYE')
+    montant_restant = plan.montant_caution_total - montant_total_paye
+    
+    context = {
+        'plan': plan,
+        'paiements': paiements,
+        'paiements_payes': paiements_payes,
+        'montant_total_paye': montant_total_paye,
+        'montant_restant': montant_restant,
+        'pourcentage_completion': (paiements_payes / plan.nombre_mensualites * 100) if plan.nombre_mensualites > 0 else 0
+    }
+    return render(request, 'annonce/paiement/voir_plan_caution.html', context)
+
+@login_required
+def effectuer_paiement_mensuel(request, pk):
+    """Marquer un paiement mensuel comme effectué"""
+    paiement = get_object_or_404(PaiementMensuelCaution, pk=pk)
+    
+    # Vérifier que l'utilisateur est le locataire
+    if request.user != paiement.plan_paiement.locataire:
+        from django.contrib import messages
+        messages.error(request, 'Vous n\'êtes pas autorisé à effectuer ce paiement.')
+        return redirect('dashboard-list')
+    
+    if request.method == 'POST':
+        form = PaiementMensuelForm(request.POST, instance=paiement)
+        if form.is_valid():
+            paiement = form.save(commit=False)
+            paiement.statut = 'PAYE'
+            paiement.date_paiement = timezone.now()
+            paiement.save()
+            
+            from django.contrib import messages
+            messages.success(request, f'Paiement de la mensualité {paiement.numero_mensualite} confirmé!')
+            return redirect('voir_plan_paiement_caution', pk=paiement.plan_paiement.id)
+    else:
+        form = PaiementMensuelForm(instance=paiement)
+    
+    context = {
+        'form': form,
+        'paiement': paiement
+    }
+    return render(request, 'annonce/paiement/effectuer_paiement.html', context)
+
+@login_required
+def liste_plans_paiement_proprietaire(request):
+    """Liste des plans de paiement pour un propriétaire"""
+    if request.user.typelocataire == 'PART':
+        return redirect('dashboard-list')
+    
+    annonces = Annonce.objects.filter(user=request.user)
+    plans = PlanPaiementCaution.objects.filter(annonce__in=annonces).order_by('-date_creation')
+    
+    context = {'plans': plans}
+    return render(request, 'annonce/paiement/liste_plans_proprietaire.html', context)

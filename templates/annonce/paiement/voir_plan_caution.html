@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de paiement caution</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .plan-header {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #28a745;
+            transition: width 0.3s ease;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-paye {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-en-attente {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-en-retard {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .back-link {
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'dashboard-list' %}" class="back-link btn btn-secondary">← Retour au tableau de bord</a>
+        
+        <h1>Plan de paiement de la caution</h1>
+        
+        <div class="plan-header">
+            <h3>{{ plan.annonce.titre_logement }}</h3>
+            <p><strong>Locataire:</strong> {{ plan.locataire.first_name }} {{ plan.locataire.last_name }}</p>
+            <p><strong>Propriétaire:</strong> {{ plan.annonce.user.first_name }} {{ plan.annonce.user.last_name }}</p>
+            <p><strong>Statut:</strong> {{ plan.get_statut_display }}</p>
+            <p><strong>Date de création:</strong> {{ plan.date_creation|date:"d/m/Y" }}</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ plan.montant_caution_total }}€</div>
+                <div>Montant total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ montant_total_paye }}€</div>
+                <div>Montant payé</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ montant_restant }}€</div>
+                <div>Montant restant</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ paiements_payes }}/{{ plan.nombre_mensualites }}</div>
+                <div>Mensualités payées</div>
+            </div>
+        </div>
+        
+        <div>
+            <h4>Progression du paiement</h4>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ pourcentage_completion }}%"></div>
+            </div>
+            <p>{{ pourcentage_completion|floatformat:1 }}% complété</p>
+        </div>
+        
+        <h3>Détail des mensualités</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mensualité</th>
+                    <th>Montant</th>
+                    <th>Date d'échéance</th>
+                    <th>Date de paiement</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for paiement in paiements %}
+                <tr>
+                    <td>{{ paiement.numero_mensualite }}</td>
+                    <td>{{ paiement.montant }}€</td>
+                    <td>{{ paiement.date_echeance|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if paiement.date_paiement %}
+                            {{ paiement.date_paiement|date:"d/m/Y H:i" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ paiement.statut|lower }}">
+                            {{ paiement.get_statut_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if paiement.statut == 'EN_ATTENTE' and user == plan.locataire %}
+                            <a href="{% url 'effectuer_paiement_mensuel' paiement.id %}" class="btn btn-success">
+                                Effectuer le paiement
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un plan de paiement pour la caution</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .annonce-info {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        #montant-mensuel {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 18px;
+        }
+    </style>
+    <script>
+        function calculerMontantMensuel() {
+            const montantTotal = document.getElementById('id_montant_caution_total').value;
+            const nombreMensualites = document.getElementById('id_nombre_mensualites').value;
+            const montantMensuelDiv = document.getElementById('montant-mensuel');
+            
+            if (montantTotal && nombreMensualites) {
+                const montantMensuel = (montantTotal / nombreMensualites).toFixed(2);
+                montantMensuelDiv.innerHTML = `Montant mensuel: ${montantMensuel}€`;
+            } else {
+                montantMensuelDiv.innerHTML = '';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Créer un plan de paiement pour la caution</h1>
+        
+        <div class="annonce-info">
+            <h3>{{ annonce.titre_logement }}</h3>
+            <p><strong>Propriétaire:</strong> {{ annonce.user.first_name }} {{ annonce.user.last_name }}</p>
+            <p><strong>Type:</strong> {{ annonce.get_hebergement_choice_display }}</p>
+        </div>
+        
+        <div class="info-box">
+            <strong>Information:</strong> Vous pouvez étaler le paiement de votre caution sur une période de 1 à 12 mois. 
+            Chaque mensualité sera due le même jour du mois.
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.montant_caution_total.id_for_label }}">Montant total de la caution (€):</label>
+                {{ form.montant_caution_total }}
+                <small>Montant total de la caution à payer</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.nombre_mensualites.id_for_label }}">Nombre de mensualités:</label>
+                {{ form.nombre_mensualites }}
+                <small>Sur combien de mois souhaitez-vous étaler le paiement ?</small>
+            </div>
+            
+            <div id="montant-mensuel" style="margin: 20px 0;"></div>
+            
+            <button type="submit" class="btn">Créer le plan de paiement</button>
+            <a href="{% url 'dashboard-list' %}" class="btn btn-secondary">Annuler</a>
+        </form>
+    </div>
+    
+    <script>
+        // Calculer automatiquement le montant mensuel
+        document.getElementById('id_montant_caution_total').addEventListener('input', calculerMontantMensuel);
+        document.getElementById('id_nombre_mensualites').addEventListener('change', calculerMontantMensuel);
+        
+        // Calculer au chargement de la page si les valeurs sont pré-remplies
+        calculerMontantMensuel();
+    </script>
+</body>
+</html>

@@ -38,8 +38,14 @@ urlpatterns = [
     path('detail_annonce/<str:pk>/', views.detail_annonce, name='detail-annonce'),
     path('selectionner-annonce/<int:pk>/', views.selectionner_annonce, name='selectionner-annonce'),
     path('annuler-selection-annonce/<int:pk>/', views.annuler_selection_annonce, name='annuler-selection-annonce'),
-    path('annuler-selection/<int:pk>/', views.annuler_selection_annonce, name='annuler-selection'),  # Redirection temporaire
-    path('ajouter-au-tableau-de-bord/<int:pk>/', views.ajouter_au_tableau_de_bord, name='ajouter-au-tableau-de-bord'),
+    path('annuler-selection/<int:pk>/', views.annuler_selection_annonce, name='annuler-selection-annonce'),
+    path('ajouter-tableau-bord/<int:pk>/', views.ajouter_au_tableau_de_bord, name='ajouter-au-tableau-de-bord'),
+
+    # URLs pour le paiement de caution en mensualités
+    path('creer-plan-caution/<int:pk>/', views.creer_plan_paiement_caution, name='creer-plan-caution'),
+    path('voir-plan-caution/<int:pk>/', views.voir_plan_paiement_caution, name='voir_plan_paiement_caution'),
+    path('effectuer-paiement/<int:pk>/', views.effectuer_paiement_mensuel, name='effectuer_paiement_mensuel'),
+    path('plans-caution-proprietaire/', views.liste_plans_paiement_proprietaire, name='liste_plans_paiement_proprietaire'),
 
     # Profile
     path('profile/', views.profile_annonce, name='profile-annonce'),

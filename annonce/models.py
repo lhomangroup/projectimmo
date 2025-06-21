@@ -261,6 +261,85 @@ class Equipement(models.Model):
     # Vous pouvez ajouter d'autres champs d'équipement ici selon vos besoins
     # Par exemple :
     # wifi = models.BooleanField(default=False)
+
+
+class PlanPaiementCaution(models.Model):
+    """Modèle pour gérer les plans de paiement de caution en mensualités"""
+    annonce = models.OneToOneField(
+        Annonce,
+        on_delete=models.CASCADE,
+        related_name='plan_paiement_caution'
+    )
+    locataire = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='plans_paiement_caution'
+    )
+    montant_caution_total = models.FloatField(verbose_name="Montant total de la caution")
+    nombre_mensualites = models.IntegerField(
+        default=12,
+        validators=[MinValueValidator(1), MaxValueValidator(12)],
+        verbose_name="Nombre de mensualités"
+    )
+    montant_mensuel = models.FloatField(verbose_name="Montant mensuel")
+    date_creation = models.DateTimeField(auto_now_add=True)
+    
+    class StatutPlan(models.TextChoices):
+        EN_COURS = 'EN_COURS', _('En cours')
+        TERMINE = 'TERMINE', _('Terminé')
+        SUSPENDU = 'SUSPENDU', _('Suspendu')
+        ANNULE = 'ANNULE', _('Annulé')
+    
+    statut = models.CharField(
+        max_length=10,
+        choices=StatutPlan.choices,
+        default=StatutPlan.EN_COURS,
+        verbose_name="Statut du plan"
+    )
+    
+    def save(self, *args, **kwargs):
+        # Calculer automatiquement le montant mensuel
+        if self.montant_caution_total and self.nombre_mensualites:
+            self.montant_mensuel = self.montant_caution_total / self.nombre_mensualites
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"Plan caution - {self.annonce.titre_logement} - {self.locataire.email}"
+
+class PaiementMensuelCaution(models.Model):
+    """Modèle pour suivre chaque paiement mensuel de la caution"""
+    plan_paiement = models.ForeignKey(
+        PlanPaiementCaution,
+        on_delete=models.CASCADE,
+        related_name='paiements_mensuels'
+    )
+    numero_mensualite = models.IntegerField(verbose_name="Numéro de la mensualité")
+    montant = models.FloatField(verbose_name="Montant de la mensualité")
+    date_echeance = models.DateField(verbose_name="Date d'échéance")
+    date_paiement = models.DateTimeField(null=True, blank=True, verbose_name="Date de paiement")
+    
+    class StatutPaiement(models.TextChoices):
+        EN_ATTENTE = 'EN_ATTENTE', _('En attente')
+        PAYE = 'PAYE', _('Payé')
+        EN_RETARD = 'EN_RETARD', _('En retard')
+        ANNULE = 'ANNULE', _('Annulé')
+    
+    statut = models.CharField(
+        max_length=10,
+        choices=StatutPaiement.choices,
+        default=StatutPaiement.EN_ATTENTE,
+        verbose_name="Statut du paiement"
+    )
+    
+    reference_paiement = models.CharField(max_length=100, blank=True, null=True)
+    
+    class Meta:
+        ordering = ['numero_mensualite']
+        unique_together = ['plan_paiement', 'numero_mensualite']
+    
+    def __str__(self):
+        return f"Mensualité {self.numero_mensualite} - {self.plan_paiement}"
+
     # television = models.BooleanField(default=False)
     # lave_vaisselle = models.BooleanField(default=False)
     # etc.

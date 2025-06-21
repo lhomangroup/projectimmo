@@ -129,6 +129,15 @@
             </div>
         </div>
 
+        <div style="margin-bottom: 20px;">
+            <a href="{% url 'logged-annonce' %}" class="btn" style="background-color: #28a745;">
+                ➕ Créer une nouvelle annonce
+            </a>
+            <a href="{% url 'liste_plans_paiement_proprietaire' %}" class="btn" style="background-color: #17a2b8; margin-left: 10px;">
+                💳 Plans de paiement caution
+            </a>
+        </div>
+
         {% if annonces %}
         <div class="annonces-grid">
             {% for annonce in annonces %}
