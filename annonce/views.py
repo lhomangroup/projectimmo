@@ -313,12 +313,15 @@ def dashboard_list(request):
     print(f"Dashboard_list appelé pour l'utilisateur: {request.user.email}")
     print(f"Utilisateur authentifié: {request.user.is_authenticated}")
     print(f"Type d'utilisateur: {request.user.get_typelocataire_display()}")
+    print(f"Type d'utilisateur code: {request.user.typelocataire}")
 
     if request.user.typelocataire == 'PART':  # Particulier (locataire)
+        print("Utilisateur identifié comme PARTICULIER (locataire)")
         # Vérifier s'il y a une annonce sélectionnée pour ce locataire
         annonce_selectionnee = Annonce.objects.filter(locataire_interesse=request.user).first()
 
         if annonce_selectionnee:
+            print(f"Annonce sélectionnée trouvée: {annonce_selectionnee.titre_logement}")
             # Afficher l'annonce sélectionnée avec option d'annulation
             template = 'annonce/dashboard/dashboard_locataire.html'
             context = {
@@ -326,11 +329,13 @@ def dashboard_list(request):
                 'is_locataire': True
             }
         else:
+            print("Aucune annonce sélectionnée, affichage de toutes les annonces")
             # Afficher toutes les annonces disponibles pour les locataires
             annonces = Annonce.objects.filter(locataire_interesse__isnull=True).order_by('-id')
             template = 'annonce/search/annonce_result.html'
             context = {'annonces': annonces, 'is_locataire': True}
-    else:  # Professionnel (propriétaire/agent)
+    elif request.user.typelocataire == 'PROF':  # Professionnel (propriétaire/agent)
+        print("Utilisateur identifié comme PROFESSIONNEL (propriétaire)")
         # Afficher seulement leurs propres annonces
         annonces = Annonce.objects.filter(user=request.user).order_by('-id')
         template = 'annonce/dashboard/dashboard_list.html'
@@ -338,8 +343,15 @@ def dashboard_list(request):
 
         for annonce in annonces:
             print(f"Annonce ID: {annonce.id}, Titre: {annonce.titre_logement}")
+    else:
+        print(f"Type d'utilisateur non reconnu: {request.user.typelocataire}")
+        # Par défaut, traiter comme propriétaire
+        annonces = Annonce.objects.filter(user=request.user).order_by('-id')
+        template = 'annonce/dashboard/dashboard_list.html'
+        context = {'annonces': annonces, 'is_locataire': False}
 
-    print(f"Nombre d'annonces trouvées: {len(context.get('annonces', [annonce_selectionnee] if 'annonce_selectionnee' in locals() else []))}")
+    print(f"Template utilisé: {template}")
+    print(f"Nombre d'annonces trouvées: {len(context.get('annonces', [context.get('annonce_selectionnee')] if context.get('annonce_selectionnee') else []))}")
     return render(request, template, context)
 
 @login_required
