@@ -28,12 +28,16 @@ class Command(BaseCommand):
         # Créer l'utilisateur
         user = Account.objects.create_user(
             email=email,
-            password=password,
+            telephone='0123456789',  # Numéro par défaut
             first_name=first_name,
             last_name=last_name,
             typelocataire='PROF',  # Professionnel pour propriétaire
-            is_active=True
+            password=password
         )
+        
+        # Activer le compte après création
+        user.is_active = True
+        user.save()
 
         # Créer le profil Client associé
         Client.objects.create(
