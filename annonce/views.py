@@ -1002,3 +1002,20 @@ def proprietaire_annonce(request, pk):
         'proprietaire': proprietaire
     }
     return render(request, 'annonce/proprietaire_info.html', context)
+
+def liste_proprietaires(request):
+    """Afficher la liste de tous les propriétaires"""
+    from django.db.models import Count
+    from account.models import Account
+    
+    # Récupérer tous les utilisateurs qui ont au moins une annonce
+    proprietaires = Account.objects.filter(
+        annonce__isnull=False
+    ).annotate(
+        nombre_annonces=Count('annonce')
+    ).distinct().order_by('first_name', 'last_name')
+    
+    context = {
+        'proprietaires': proprietaires
+    }
+    return render(request, 'annonce/liste_proprietaires.html', context)
