@@ -15,7 +15,7 @@ class AnnonceForm(ModelForm):
     class Meta:
         model = Annonce
         fields = ['categorie_logement', 'type_location_choices']
-    
+
     def __init__(self, *args, **kwargs):
         super(AnnonceForm, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -43,11 +43,11 @@ class CreateUserForm(UserCreationForm):
         label="Type d'utilisateur",
         widget=forms.Select(attrs={'id': 'id_type_utilisateur'})
     )
-    
+
     class Meta(UserCreationForm.Meta):
         model = Account
         fields = ('email','first_name','last_name','telephone','type_utilisateur','typelocataire')
-    
+
     def __init__(self, *args, **kwargs):
         super(CreateUserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -56,8 +56,16 @@ class CreateUserForm(UserCreationForm):
 class DescriptionForm(ModelForm):
     class Meta:
         model = Annonce
-        fields = ['titre_logement','description','categorie_logement','nombre_personne', 'pieces_couchage', 'hebergement_choice', 'type_location_choices']
-    
+        fields = ['titre_logement','description','nombre_personne', 'pieces_couchage', 'hebergement_choice', 'type_location_choices']
+        widgets = {
+            'titre_logement': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Titre du logement'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Description détaillée du logement'}),
+            'nombre_personne': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 20}),
+            'pieces_couchage': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 10}),
+            'hebergement_choice': forms.Select(attrs={'class': 'form-control'}),
+            'type_location_choices': forms.Select(attrs={'class': 'form-control'}),
+        }
+
     def __init__(self, *args, **kwargs):
         super(DescriptionForm, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -67,7 +75,7 @@ class EquipmentForm(ModelForm):
     class Meta:
         model = Annonce
         fields = ['equipements']
-    
+
     def __init__(self, *args, **kwargs):
         super(EquipmentForm, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -102,7 +110,7 @@ class FormLoyer(ModelForm):
     class Meta:
         model = Annonce
         fields = ['loyer_tc', 'charges_loyer']
-    
+
     def __init__(self, *args, **kwargs):
         super(FormLoyer, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -122,7 +130,7 @@ class FormCondition(ModelForm):
     class Meta:
         model = Condition
         exclude = ['annonce']
-    
+
     def __init__(self, *args, **kwargs):
         super(FormCondition, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -132,7 +140,7 @@ class FormEquipement(ModelForm):
     class Meta:
         model = Equipement
         exclude = ['annonce']
-    
+
     def __init__(self, *args, **kwargs):
         super(FormEquipement, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -152,7 +160,7 @@ class FormDiagnostic(ModelForm):
             'copopriete' : 'Extrait du règlement de copropriété',
             'docPerformance': 'Diagnostic de Performance Énergétique',
         }
-    
+
     def __init__(self, *args, **kwargs):
         super(FormDiagnostic, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -162,7 +170,7 @@ class UserModif(ModelForm):
     class Meta:
         model = Account
         fields = ('email','first_name','last_name','telephone','typelocataire')
-    
+
     def __init__(self, *args, **kwargs):
         super(UserModif, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -172,7 +180,7 @@ class VerifImage(ModelForm):
     class Meta:
         model = Account
         fields = ('photo_profil', 'photo_identite')
-    
+
     def __init__(self, *args, **kwargs):
         super(VerifImage, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -182,7 +190,7 @@ class ImageForm(ModelForm):
     class Meta:
         model = ImageLogement
         fields = ['images']
-    
+
     def __init__(self, *args, **kwargs):
         super(ImageForm, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -192,7 +200,7 @@ class DureeLOcationForm(ModelForm):
     class Meta:
         model = Annonce
         fields = ['dureeLocationMini', 'dureeLocationMaxi']
-    
+
     def __init__(self, *args, **kwargs):
         super(DureeLOcationForm, self).__init__(*args,**kwargs)
         self.helper = FormHelper()
@@ -203,7 +211,7 @@ class PlanPaiementCautionForm(forms.ModelForm):
     class Meta:
         model = PlanPaiementCaution
         fields = ['montant_caution_total', 'nombre_mensualites']
-        
+
     def __init__(self, *args, **kwargs):
         super(PlanPaiementCautionForm, self).__init__(*args, **kwargs)
         self.fields['nombre_mensualites'].widget = forms.Select(choices=[
@@ -220,7 +228,7 @@ class PaiementMensuelForm(forms.ModelForm):
     class Meta:
         model = PaiementMensuelCaution
         fields = ['reference_paiement']
-        
+
     def __init__(self, *args, **kwargs):
         super(PaiementMensuelForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()

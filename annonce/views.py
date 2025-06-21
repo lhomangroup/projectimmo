@@ -361,48 +361,72 @@ def description_view(request, pk):
     myAdress = myObject.address
 
     if request.method == 'POST':
-        form = DescriptionForm(request.POST, instance=myObject)
+        print(f"POST reçu pour l'annonce {pk}")
+        print(f"Données POST: {request.POST}")
+        
+        # Sauvegarder manuellement les champs de l'annonce
+        titre_logement = request.POST.get('titre_logement', '')
+        description = request.POST.get('description', '')
+        nombre_personne = request.POST.get('nombre_personne', 1)
+        pieces_couchage = request.POST.get('pieces_couchage', 1)
+        hebergement_choice = request.POST.get('hebergement_choice', '')
+        type_location_choices = request.POST.get('type_location_choices', '')
 
-        # Récupérer les données d'adresse
-        rue = request.POST.get('rue', '')
-        voie = request.POST.get('voie', '')
-        ville = request.POST.get('ville', '')
-        region = request.POST.get('region', '')
-        zip = request.POST.get('zip', '')
-        pays = request.POST.get('pays', 'France')
-        address = request.POST.get('adressComplete')
+        try:
+            # Mettre à jour l'annonce
+            myObject.titre_logement = titre_logement
+            myObject.description = description
+            myObject.nombre_personne = int(nombre_personne) if nombre_personne else 1
+            myObject.pieces_couchage = int(pieces_couchage) if pieces_couchage else 1
+            if hebergement_choice:
+                myObject.hebergement_choice = hebergement_choice
+            if type_location_choices:
+                myObject.type_location_choices = type_location_choices
+            myObject.save()
+            print(f"Annonce {pk} mise à jour avec succès")
 
-        if form.is_valid():
-            # Sauvegarder l'annonce
-            form.save()
+            # Récupérer les données d'adresse
+            rue = request.POST.get('rue', '')
+            voie = request.POST.get('voie', '')
+            ville = request.POST.get('ville', '')
+            region = request.POST.get('region', '')
+            zip_code = request.POST.get('zip', '')
+            pays = request.POST.get('pays', 'France')
 
-            # Mettre à jour l'adresse si les champs d'adresse sont fournis
-            if address:
+            # Mettre à jour ou créer l'adresse
+            if any([rue, voie, ville, region, zip_code, pays != 'France']):
                 if myAdress:
                     myAdress.rue = rue
                     myAdress.voie = voie
                     myAdress.ville = ville
                     myAdress.region = region
-                    myAdress.zipCode = zip
+                    myAdress.zipCode = zip_code
                     myAdress.pays = pays
                     myAdress.save()
+                    print(f"Adresse mise à jour: {ville}")
                 else:
                     # Créer une nouvelle adresse si elle n'existe pas
-                    from annonce.models import AdressAnnonce
                     myAdress = AdressAnnonce.objects.create(
                         rue=rue,
                         voie=voie,
                         ville=ville,
                         region=region,
-                        zipCode=zip,
+                        zipCode=zip_code,
                         pays=pays
                     )
                     myObject.address = myAdress
                     myObject.save()
+                    print(f"Nouvelle adresse créée: {ville}")
 
+            from django.contrib import messages
+            messages.success(request, 'Les informations ont été sauvegardées avec succès!')
             return redirect(request.META.get('HTTP_REFERER', '/annonce/dashboard/list/'))
-        else:
-            print("Erreurs du formulaire:", form.errors)
+
+        except Exception as e:
+            print(f"Erreur lors de la sauvegarde: {e}")
+            from django.contrib import messages
+            messages.error(request, f'Erreur lors de la sauvegarde: {e}')
+
     else:
         form = DescriptionForm(instance=myObject)
 
