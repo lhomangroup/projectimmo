@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plans de paiement caution - Propriétaire</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .logout-link {
+            color: #dc3545;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #dc3545;
+            border-radius: 4px;
+        }
+        .plans-container {
+            display: grid;
+            gap: 20px;
+        }
+        .plan-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .plan-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .plan-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-en-cours {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-termine {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .plan-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .detail-item {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .detail-value {
+            font-weight: bold;
+            color: #333;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-outline {
+            background: white;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #28a745;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Plans de paiement caution</h1>
+        <div>
+            <a href="{% url 'dashboard-list' %}" class="btn btn-outline">Retour au tableau de bord</a>
+            <a href="/annonce/logout-annonce/" class="logout-link">Se déconnecter</a>
+        </div>
+    </div>
+
+    {% if plans %}
+        <div class="plans-container">
+            {% for plan in plans %}
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <div class="plan-title">{{ plan.annonce.titre_logement }}</div>
+                        <span class="plan-status status-{{ plan.statut|lower }}">
+                            {{ plan.get_statut_display }}
+                        </span>
+                    </div>
+
+                    <div class="plan-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Locataire</div>
+                            <div class="detail-value">{{ plan.locataire.first_name }} {{ plan.locataire.last_name }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email locataire</div>
+                            <div class="detail-value">{{ plan.locataire.email }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Montant total caution</div>
+                            <div class="detail-value">{{ plan.montant_caution_total|floatformat:2 }}€</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Montant mensuel</div>
+                            <div class="detail-value">{{ plan.montant_mensuel|floatformat:2 }}€</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Nombre de mensualités</div>
+                            <div class="detail-value">{{ plan.nombre_mensualites }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Date de création</div>
+                            <div class="detail-value">{{ plan.date_creation|date:"d/m/Y" }}</div>
+                        </div>
+                    </div>
+
+                    {% with paiements_payes=plan.paiements_mensuels.all|dictsort:"statut"|dictsort:"statut" %}
+                        {% with total_payes=plan.paiements_mensuels.all|length %}
+                            <div class="detail-item">
+                                <div class="detail-label">Progression des paiements</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: {% widthratio total_payes plan.nombre_mensualites 100 %}%"></div>
+                                </div>
+                                <div class="detail-value">{{ total_payes }} / {{ plan.nombre_mensualites }} mensualités</div>
+                            </div>
+                        {% endwith %}
+                    {% endwith %}
+
+                    <div class="actions">
+                        <a href="{% url 'voir_plan_paiement_caution' plan.id %}" class="btn btn-primary">
+                            Voir détails
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>Aucun plan de paiement caution</h3>
+            <p>Aucun locataire n'a encore créé de plan de paiement pour vos annonces.</p>
+            <p>Les plans de paiement apparaîtront ici lorsque des locataires sélectionneront vos annonces et créeront des plans de paiement échelonné pour la caution.</p>
+            <a href="{% url 'dashboard-list' %}" class="btn btn-primary">Retourner aux annonces</a>
+        </div>
+    {% endif %}
+</body>
+</html>
