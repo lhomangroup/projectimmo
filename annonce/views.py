@@ -175,6 +175,7 @@ def inscriptionPage(request):
 @unauthenticated_user
 def login_user(request):
     from django.views.decorators.csrf import csrf_protect
+    from django.contrib import messages
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -184,15 +185,17 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
-
+            
             # Rediriger selon le type d'utilisateur
             if user.typelocataire == 'PART':  # Particulier (locataire)
-                return redirect('dashboard-list')  # Dashboard des annonces existantes
+                return redirect('dashboard-list')
             else:  # Professionnel (propriétaire/agent)
-                return redirect('logged-annonce')  # Page de création d'annonce
+                return redirect('dashboard-list')  # Redirection vers le dashboard principal
+        else:
+            messages.error(request, 'Email ou mot de passe incorrect.')
 
     context = {}
-    return render(request, 'compte/login-annonce.html')
+    return render(request, 'compte/login-annonce.html', context)
 
 def logout_annonce(request):
     logout(request)
