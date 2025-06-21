@@ -180,18 +180,41 @@ def login_user(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+        
+        print(f"Tentative de connexion pour: {email}")
+
+        # Vérifier que l'utilisateur existe
+        try:
+            from account.models import Account
+            user_exists = Account.objects.filter(email=email).first()
+            if user_exists:
+                print(f"Utilisateur trouvé: {user_exists.email}, actif: {user_exists.is_active}")
+            else:
+                print(f"Aucun utilisateur trouvé avec l'email: {email}")
+                messages.error(request, 'Aucun compte trouvé avec cet email.')
+                context = {}
+                return render(request, 'compte/login-annonce.html', context)
+        except Exception as e:
+            print(f"Erreur lors de la vérification utilisateur: {e}")
 
         user = authenticate(request, email=email, password=password)
+        print(f"Résultat authentication: {user}")
 
         if user is not None:
-            login(request, user)
-            
-            # Rediriger selon le type d'utilisateur
-            if user.typelocataire == 'PART':  # Particulier (locataire)
-                return redirect('dashboard-list')
-            else:  # Professionnel (propriétaire/agent)
-                return redirect('dashboard-list')  # Redirection vers le dashboard principal
+            if user.is_active:
+                login(request, user)
+                print(f"Connexion réussie pour: {user.email}")
+                
+                # Rediriger selon le type d'utilisateur
+                if user.typelocataire == 'PART':  # Particulier (locataire)
+                    return redirect('dashboard-list')
+                else:  # Professionnel (propriétaire/agent)
+                    return redirect('dashboard-list')
+            else:
+                print(f"Utilisateur inactif: {user.email}")
+                messages.error(request, 'Votre compte n\'est pas activé.')
         else:
+            print(f"Échec de l'authentification pour: {email}")
             messages.error(request, 'Email ou mot de passe incorrect.')
 
     context = {}
