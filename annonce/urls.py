@@ -40,6 +40,7 @@ urlpatterns = [
     path('annuler-selection-annonce/<int:pk>/', views.annuler_selection_annonce, name='annuler-selection-annonce'),
     path('annuler-selection/<int:pk>/', views.annuler_selection_annonce, name='annuler-selection-annonce'),
     path('ajouter-tableau-bord/<int:pk>/', views.ajouter_au_tableau_de_bord, name='ajouter-au-tableau-de-bord'),
+    path('supprimer-annonce/<int:pk>/', views.supprimer_annonce, name='supprimer-annonce'),
 
     # URLs pour le paiement de caution en mensualités
     path('creer-plan-caution/<int:pk>/', views.creer_plan_paiement_caution, name='creer-plan-caution'),

@@ -754,6 +754,43 @@ def annuler_selection_annonce(request, pk):
     return redirect('dashboard-list')
 
 @login_required
+def supprimer_annonce(request, pk):
+    """Vue pour supprimer une annonce (pour les propriétaires)"""
+    annonce = get_object_or_404(Annonce, pk=pk)
+    
+    # Vérifier que l'utilisateur est le propriétaire de l'annonce
+    if annonce.user != request.user:
+        from django.contrib import messages
+        messages.error(request, 'Vous n\'êtes pas autorisé à supprimer cette annonce.')
+        return redirect('dashboard-list')
+    
+    if request.method == 'POST':
+        titre_annonce = annonce.titre_logement
+        
+        # Supprimer les images associées
+        images = ImageLogement.objects.filter(annonce=annonce)
+        for image in images:
+            # Supprimer le fichier physique
+            if image.images:
+                try:
+                    import os
+                    if os.path.isfile(image.images.path):
+                        os.remove(image.images.path)
+                except:
+                    pass
+            image.delete()
+        
+        # Supprimer l'annonce (cela supprimera aussi automatiquement les objets liés par CASCADE)
+        annonce.delete()
+        
+        from django.contrib import messages
+        messages.success(request, f'L\'annonce "{titre_annonce}" a été supprimée avec succès.')
+        return redirect('dashboard-list')
+    
+    context = {'annonce': annonce}
+    return render(request, 'annonce/dashboard/supprimer_annonce.html', context)
+
+@login_required
 def ajouter_au_tableau_de_bord(request, pk):
     """Vue pour qu'un locataire ajoute une annonce à son tableau de bord"""
     if request.user.typelocataire != 'PART':

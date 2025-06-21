@@ -183,6 +183,7 @@
                     <a href="{% url 'dashboard-annonce' annonce.id %}" class="btn btn-info btn-sm">Gérer</a>
                     <a href="{% url 'dashboard-description' annonce.id %}" class="btn btn-warning btn-sm">Modifier</a>
                     <a href="/annonce/detail_annonce/{{ annonce.id }}" class="btn btn-sm" target="_blank">Voir public</a>
+                    <a href="{% url 'supprimer-annonce' annonce.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')">Supprimer</a>
                 </div>
             </div>
             {% endfor %}
