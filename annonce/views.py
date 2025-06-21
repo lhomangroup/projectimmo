@@ -3,6 +3,7 @@ from pyexpat.errors import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.baseconv import base64
 from django.views import View
+from django.utils import timezone
 
 from .models import Annonce, ImageLogement, AdressAnnonce, Condition, Equipement, PlanPaiementCaution, PaiementMensuelCaution
 from django.contrib.auth.decorators import login_required
