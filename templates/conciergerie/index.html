@@ -98,7 +98,20 @@
         .annonce-image {
             width: 100%;
             height: 200px;
-            background-color: #e9ecef;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .annonce-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .no-image {
+            color: #6c757d;
+            font-size: 14px;ground-color: #e9ecef;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -190,13 +203,13 @@
             {% for ann in annonce %}
             <div class="annonce-card">
                 <div class="annonce-image">
-                    {% for img in image %}
-                        {% if img.annonce == ann %}
-                            <img src="{{ img.images.url }}" alt="Photo du logement">
+                    {% with ann.imagelogement_set.first as first_image %}
+                        {% if first_image %}
+                            <img src="{{ first_image.images.url }}" alt="Photo du logement">
+                        {% else %}
+                            <div class="no-image">📷 Aucune image</div>
                         {% endif %}
-                    {% empty %}
-                        📷 Aucune image
-                    {% endfor %}
+                    {% endwith %}
                 </div>
                 
                 <div class="annonce-content">

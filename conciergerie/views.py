@@ -55,5 +55,39 @@ def search_conciergerie(request):
 
 
 from django.shortcuts import render
+from annonce.models import Annonce, ImageLogement
 
-# Create your views here.
+def index(request):
+    """Vue principale de la conciergerie"""
+    # Récupérer les dernières annonces avec leurs images
+    annonces = Annonce.objects.select_related('address').prefetch_related('imagelogement_set').all().order_by('-id')[:6]
+    
+    context = {'annonce': annonces}
+    return render(request, 'conciergerie/index.html', context)
+
+def search_conciergerie(request):
+    """Vue de recherche dans la conciergerie"""
+    query_ville = request.GET.get('query_ville', '')
+    query_type = request.GET.get('query_type', '')
+    query_locataires = request.GET.get('query_locataires', '')
+    
+    # Base queryset
+    annonces = Annonce.objects.select_related('address').prefetch_related('imagelogement_set').all()
+    
+    # Filtrer selon les critères
+    if query_ville:
+        annonces = annonces.filter(address__ville__icontains=query_ville)
+    
+    if query_type:
+        annonces = annonces.filter(type_location_choices=query_type)
+    
+    if query_locataires:
+        annonces = annonces.filter(nombre_personne__gte=int(query_locataires))
+    
+    context = {
+        'annonces': annonces.order_by('-id'),
+        'query_ville': query_ville,
+        'query_type': query_type,
+        'query_locataires': query_locataires,
+    }
+    return render(request, 'conciergerie/search_conciergerie.html', context)
